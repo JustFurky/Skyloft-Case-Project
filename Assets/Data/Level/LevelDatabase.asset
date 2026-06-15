@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70285b9fabe904c3da89f56b9e3b2a70, type: 3}
+  m_Name: LevelDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Level.LevelDatabase
+  _levels:
+  - {fileID: 11400000, guid: 8a89f4eb039ab43aaa52f3302b6e6d99, type: 2}
+  - {fileID: 11400000, guid: 279d80dfb8b6f444b87ecf52712f6f62, type: 2}
+  - {fileID: 11400000, guid: 607e663c121f44f988f3b406eaf8bd8f, type: 2}
