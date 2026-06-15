@@ -1168,9 +1168,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1856054330925226835, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2819808793073507634, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
       propertyPath: m_Name
       value: GamePlay_Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
