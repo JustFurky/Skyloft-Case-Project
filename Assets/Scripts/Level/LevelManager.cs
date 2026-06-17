@@ -3,10 +3,6 @@ using SkyloftGame.Data;
 
 namespace SkyloftGame.Level
 {
-    /// <summary>
-    /// LevelDatabase üzerinden seviye yükleyen ve ilerlemeyi DataManager ile
-    /// kalıcı tutan servis. State makinesi seviye geçişlerinde bunu kullanır.
-    /// </summary>
     public class LevelManager : MonoBehaviour, ILevelService
     {
         [SerializeField] private LevelDatabase _database;
@@ -22,14 +18,14 @@ namespace SkyloftGame.Level
         private void Awake()
         {
             if (_database == null || _database.Count == 0)
-                Debug.LogError("[LevelManager] LevelDatabase atanmamış veya boş.", this);
+                Debug.LogError("[LevelManager] LevelDatabase is not assigned or is empty.", this);
         }
 
         public void Load(int index)
         {
             if (_database == null || !_database.IsValidIndex(index))
             {
-                Debug.LogError($"[LevelManager] Geçersiz seviye index'i: {index}", this);
+                Debug.LogError($"[LevelManager] Invalid level index: {index}", this);
                 return;
             }
 
@@ -46,7 +42,6 @@ namespace SkyloftGame.Level
 
         public void MarkCurrentCompleted()
         {
-            // Bir sonraki seviyeyi kalıcı olarak aç (mevcut + 1, sınır içinde).
             int nextUnlocked = Mathf.Min(CurrentIndex + 1, Mathf.Max(0, Count - 1));
             DataManager.Instance?.UnlockLevel(nextUnlocked);
         }

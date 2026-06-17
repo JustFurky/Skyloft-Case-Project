@@ -2,29 +2,17 @@ using UnityEngine;
 
 namespace SkyloftGame.Player
 {
-    /// <summary>
-    /// Oyuncunun menzilindeki en yakın düşmanı bulan algılama bileşeni.
-    ///
-    /// Physics.OverlapSphereNonAlloc kullanır: yarıçap içindeki çarpıştırıcıları
-    /// önceden ayrılmış bir tampona yazar — çerçeve başına çöp (GC) üretmez ve
-    /// fiziğin broadphase'i sayesinde yalnızca yakındaki adaylar değerlendirilir.
-    /// (Radyal algılama için doğru araç budur; SphereCast ışın boyunca süpürme içindir.)
-    ///
-    /// Tek bir algılama kaynağı olarak hem nişan alma (PlayerController) hem de
-    /// ateş etme (PlayerShooter) bunu paylaşır (DRY).
-    /// </summary>
     public class PlayerTargeting : MonoBehaviour
     {
-        [Tooltip("Hedef arama yarıçapı.")]
+        [Tooltip("Target search radius.")]
         [SerializeField] private float _range = 12f;
 
-        [Tooltip("Hedef olarak kabul edilecek katman(lar) — Enemy.")]
+        [Tooltip("Layer(s) accepted as targets — Enemy.")]
         [SerializeField] private LayerMask _targetLayers;
 
-        [Tooltip("Aynı anda değerlendirilecek maksimum aday (tampon boyutu).")]
+        [Tooltip("Maximum candidates evaluated at once (buffer size).")]
         [Min(1)] [SerializeField] private int _maxCandidates = 32;
 
-        /// <summary>O an kilitlenilen en yakın hedef; yoksa null.</summary>
         public Transform CurrentTarget { get; private set; }
 
         public float Range => _range;

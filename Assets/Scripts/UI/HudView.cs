@@ -1,31 +1,42 @@
+using PrimeTween;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using SkyloftGame.Gameplay;
 
 namespace SkyloftGame.UI
 {
-    /// <summary>
-    /// Oynanış sırasındaki HUD: geri sayım ve öldürme sayısı.
-    /// Servislere olay-tabanlı bağlanır; her karede polling yapmaz.
-    ///
-    /// Can barı artık Player prefab'ına ait (bkz. PlayerHealthBar); böylece HUD'un
-    /// sahnedeki oyuncuya doğrudan referans tutma zorunluluğu ortadan kalkar.
-    /// </summary>
     public class HudView : UIPanel
     {
         [SerializeField] private TMP_Text _timerLabel;
         [SerializeField] private TMP_Text _killsLabel;
+        [SerializeField] private Button   _pauseButton;
+
+        [Header("Wave Countdown")]
+        [Tooltip("Text showing the between-wave countdown (blinks every second).")]
+        [SerializeField] private TMP_Text     _waveCountdownLabel;
+        [Tooltip("Blink duration is read from here (same asset as EnemySpawner).")]
+        [SerializeField] private WaveSettings _waveSettings;
 
         private ICountdownTimer _timer;
         private IScoreService   _score;
+        private IEnemySpawner   _spawner;
+        private Sequence        _blink;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            if (_pauseButton != null)
+                _pauseButton.onClick.AddListener(() => PauseController.Instance?.Pause());
+        }
 
         private void OnEnable()
         {
-            // Servisleri gösterim anında çöz (init sırası güvenli).
             if (GameStateManager.Instance != null)
             {
-                _timer = GameStateManager.Instance.Timer;
-                _score = GameStateManager.Instance.Score;
+                _timer   = GameStateManager.Instance.Timer;
+                _score   = GameStateManager.Instance.Score;
+                _spawner = GameStateManager.Instance.Spawner;
             }
 
             if (_timer != null)
@@ -38,12 +49,25 @@ namespace SkyloftGame.UI
                 _score.OnRunKillsChanged += UpdateKills;
                 UpdateKills(_score.RunKills);
             }
+            if (_spawner != null)
+            {
+                _spawner.WaveCountdownTick += ShowWaveCountdown;
+                _spawner.WaveStarted       += HideWaveCountdown;
+            }
+
+            SetCountdownAlpha(0f);
         }
 
         private void OnDisable()
         {
-            if (_timer != null) _timer.OnTick -= UpdateTimer;
-            if (_score != null) _score.OnRunKillsChanged -= UpdateKills;
+            if (_timer != null)   _timer.OnTick -= UpdateTimer;
+            if (_score != null)   _score.OnRunKillsChanged -= UpdateKills;
+            if (_spawner != null)
+            {
+                _spawner.WaveCountdownTick -= ShowWaveCountdown;
+                _spawner.WaveStarted       -= HideWaveCountdown;
+            }
+            _blink.Stop();
         }
 
         private void UpdateTimer(float remaining)
@@ -57,6 +81,35 @@ namespace SkyloftGame.UI
         private void UpdateKills(int kills)
         {
             if (_killsLabel != null) _killsLabel.text = kills.ToString();
+        }
+        
+
+        private void ShowWaveCountdown(int secondsRemaining)
+        {
+            if (_waveCountdownLabel == null) return;
+
+            float half = (_waveSettings != null ? _waveSettings.blinkDuration : 0.4f) * 0.5f;
+
+            _blink.Stop();
+            _blink = Sequence.Create()
+                .Chain(Tween.Alpha(_waveCountdownLabel, 0f, half))
+                .ChainCallback(() => _waveCountdownLabel.text = $"Next Wave Start At {secondsRemaining}!")
+                .Chain(Tween.Alpha(_waveCountdownLabel, 1f, half));
+        }
+
+        private void HideWaveCountdown()
+        {
+            if (_waveCountdownLabel == null) return;
+            _blink.Stop();
+            SetCountdownAlpha(0f);
+        }
+
+        private void SetCountdownAlpha(float a)
+        {
+            if (_waveCountdownLabel == null) return;
+            Color c = _waveCountdownLabel.color;
+            c.a = a;
+            _waveCountdownLabel.color = c;
         }
     }
 }

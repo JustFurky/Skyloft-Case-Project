@@ -6,13 +6,6 @@ using EnemyUnit = SkyloftGame.Enemy.Enemy;
 
 namespace SkyloftGame.Gameplay
 {
-    /// <summary>
-    /// Düşman ölümlerini tek noktadan dinleyip hem tur içi hem kalıcı sayacı günceller.
-    ///
-    /// Enemy artık DataManager'a doğrudan bağlı değildir; yalnızca
-    /// EnemyRegistry.Killed olayını yayınlar. Skor mantığının tek sorumlusu burasıdır
-    /// (SRP) ve kalıcı kayıt detayı DataManager'a delege edilir.
-    /// </summary>
     public class ScoreService : MonoBehaviour, IScoreService
     {
         public int RunKills   { get; private set; }
@@ -32,7 +25,7 @@ namespace SkyloftGame.Gameplay
         private void HandleEnemyKilled(EnemyUnit enemy)
         {
             RunKills++;
-            DataManager.Instance?.AddEnemyKill();   // kalıcı toplam
+            DataManager.Instance?.AddEnemyKill();
             OnRunKillsChanged?.Invoke(RunKills);
         }
     }

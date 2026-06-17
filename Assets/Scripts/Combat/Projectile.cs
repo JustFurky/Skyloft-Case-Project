@@ -1,25 +1,17 @@
 using UnityEngine;
+using SkyloftGame.Audio;
 using SkyloftGame.Pool;
 
 namespace SkyloftGame.Combat
 {
-    /// <summary>
-    /// 3B havuzlanan mermi. Düz hareket eder, hedef katmana çarpınca hasar verir,
-    /// isabet VFX'i tetikler ve pool'a geri döner.
-    ///
-    /// Tetikleme algılaması için kinematik Rigidbody + trigger Collider gerekir
-    /// (NavMeshAgent'lı düşmanların Rigidbody'si yoktur).
-    /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(PooledObject))]
     public class Projectile : MonoBehaviour, IPoolable
     {
-        [SerializeField] private float     _damage    = 25f;
-        [SerializeField] private float     _lifeTime  = 3f;
-        [SerializeField] private LayerMask _hitLayers;
+        [Tooltip("Projectile parameters (damage, lifetime, collision layer, hit VFX).")]
+        [SerializeField] private ProjectileData _data;
 
-        [Tooltip("İsabet anında oynatılacak VFX pool anahtarı (boş bırakılabilir).")]
-        [SerializeField] private string _hitVfxKey = "HitVfx";
+        private const float FallbackLifeTime = 3f;
 
         private Rigidbody    _rb;
         private PooledObject _pooledObject;
@@ -27,13 +19,18 @@ namespace SkyloftGame.Combat
 
         private void Awake()
         {
-            _rb               = GetComponent<Rigidbody>();
-            _rb.isKinematic   = true;
-            _rb.useGravity    = false;
-            _pooledObject     = GetComponent<PooledObject>();
+            _rb             = GetComponent<Rigidbody>();
+            _rb.isKinematic = true;
+            _rb.useGravity  = false;
+            _pooledObject   = GetComponent<PooledObject>();
+
+            if (_data == null)
+                Debug.LogError("[Projectile] ProjectileData not assigned; projectile deals no damage.", this);
         }
 
-        public void OnSpawn()  => _pooledObject.ReleaseAfter(_lifeTime);
+        public void OnSpawn()
+            => _pooledObject.ReleaseAfter(_data != null ? _data.lifeTime : FallbackLifeTime);
+
         public void OnDespawn() => _velocity = Vector3.zero;
 
         public void Launch(Vector3 direction, float speed)
@@ -44,19 +41,24 @@ namespace SkyloftGame.Combat
 
         private void OnTriggerEnter(Collider other)
         {
-            if ((_hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
+            if (_data == null) return;
+            if ((_data.hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
 
             if (other.TryGetComponent<IDamageable>(out var damageable))
-                damageable.TakeDamage(_damage);
+                damageable.TakeDamage(_data.damage);
 
-            SpawnHitVfx();
+            AudioEvents.Play(AudioCue.Hit);
+            SpawnHitVfx(other.transform);
             _pooledObject.Release();
         }
 
-        private void SpawnHitVfx()
+        private void SpawnHitVfx(Transform enemy)
         {
-            if (string.IsNullOrEmpty(_hitVfxKey) || ObjectPooler.Instance == null) return;
-            ObjectPooler.Instance.Get(_hitVfxKey, transform.position, Quaternion.identity);
+            if (_data.hitVfx == null || ObjectPooler.Instance == null) return;
+
+            Vector3    position = enemy.position + enemy.forward * _data.hitVfxForwardOffset;
+            Quaternion rotation = Quaternion.LookRotation(-enemy.forward);
+            ObjectPooler.Instance.Get(_data.hitVfx, position, rotation);
         }
     }
 }

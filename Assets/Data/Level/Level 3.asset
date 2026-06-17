@@ -16,17 +16,17 @@ MonoBehaviour:
   displayName: Level 3
   durationSeconds: 180
   waves:
-  - enemyPoolKey: Enemy
-    count: 20
-    spawnInterval: 0.75
-    startDelay: 2
-  - enemyPoolKey: Enemy
-    count: 30
-    spawnInterval: 0.75
-    startDelay: 2
-  - enemyPoolKey: Enemy
+  - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
     count: 40
-    spawnInterval: 0.75
+    spawnInterval: 0.2
+    startDelay: 2
+  - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
+    count: 50
+    spawnInterval: 0.2
+    startDelay: 2
+  - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
+    count: 60
+    spawnInterval: 0.2
     startDelay: 2
   spawnRadius: 14
   minSpawnDistance: 7

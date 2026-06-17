@@ -2,12 +2,6 @@ using UnityEngine;
 
 namespace SkyloftGame.Level
 {
-    /// <summary>
-    /// Tüm seviyelerin sıralı kataloğu (ScriptableObject).
-    /// LevelManager bu katalog üzerinden seviyeleri index ile çözer.
-    ///
-    /// Oluşturma: Assets/Create/SkyloftGame/Level Database
-    /// </summary>
     [CreateAssetMenu(menuName = "SkyloftGame/Level Database", fileName = "LevelDatabase")]
     public class LevelDatabase : ScriptableObject
     {

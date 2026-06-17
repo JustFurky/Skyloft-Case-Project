@@ -176,7 +176,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Enemy.Enemy
   _data: {fileID: 11400000, guid: a67ec9f51dfe444d7948243c2d7e604a, type: 2}
   _bodyRenderer: {fileID: 7283851054158466794}
-  _deathVfxKey: DeathVfx
+  _spawnVfx: {fileID: 11400000, guid: e8a9551aa04b3420a95115f7984b00b4, type: 2}
+  _deathVfx: {fileID: 11400000, guid: 79f22081d9c924e4089089d4ac5c4c4c, type: 2}
 --- !u!114 &5684533116025609180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,10 +190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 326845b7c943e4754870532cc07e4f3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Enemy.EnemyAnimator
-  _animator: {fileID: 0}
-  _runState: Zombie Running
-  _attackState: Zombie Punching
-  _crossFade: 0.1
+  _animator: {fileID: 3064061700980011969}
+  _animData: {fileID: 11400000, guid: 1836b438c99e74cbeb6a325e3a46cef1, type: 2}
 --- !u!136 &3308257441087445078
 CapsuleCollider:
   m_ObjectHideFlags: 0

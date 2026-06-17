@@ -2,30 +2,21 @@ using UnityEngine;
 
 namespace SkyloftGame.Core
 {
-    /// <summary>
-    /// Kamerayı, verilen offset kadar uzaktan hedefi (oyuncu) yumuşakça takip ettirir.
-    ///
-    /// Hedef Inspector'dan atanabilir; atanmazsa PlayerLocator üzerinden otomatik
-    /// bulunur (sahnedeki oyuncuya doğrudan referans gerekmez — gevşek bağlılık).
-    ///
-    /// LateUpdate'te çalışır: oyuncu o karede hareket ettikten SONRA kamerayı
-    /// günceller; böylece titreme (jitter) olmaz.
-    /// </summary>
     public class CameraFollow : MonoBehaviour
     {
-        [Tooltip("Takip edilecek hedef. Boşsa PlayerLocator.Current kullanılır.")]
+        [Tooltip("Target to follow. If empty, PlayerLocator.Current is used.")]
         [SerializeField] private Transform _target;
 
-        [Tooltip("Hedefe göre dünya-uzayı offset (örn. tepeden-açılı için (0, 14, -8)).")]
+        [Tooltip("World-space offset from the target (e.g. (0, 14, -8) for a top-down angle).")]
         [SerializeField] private Vector3 _offset = new(0f, 14f, -8f);
 
-        [Tooltip("Konum takibi yumuşaklığı (saniye). 0 = anında kilitlen.")]
+        [Tooltip("Position follow smoothness (seconds). 0 = snap instantly.")]
         [Min(0f)] [SerializeField] private float _smoothTime = 0.15f;
 
-        [Tooltip("Açıkken kamera her zaman hedefe bakar; kapalıyken sabit yönelimi korur.")]
+        [Tooltip("When on, the camera always looks at the target; when off, it keeps a fixed orientation.")]
         [SerializeField] private bool _lookAtTarget = true;
 
-        [Tooltip("Bakış noktasının hedeften yukarı ofseti (ayak yerine gövdeye bakmak için).")]
+        [Tooltip("Upward offset of the look point from the target (to look at the body instead of the feet).")]
         [SerializeField] private float _lookHeightOffset = 1.5f;
 
         private Vector3 _velocity;

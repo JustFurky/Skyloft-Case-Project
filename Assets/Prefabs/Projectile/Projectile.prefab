@@ -92,6 +92,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &4585840864904367017
 SphereCollider:
@@ -165,9 +166,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991e88f068266443f9b8b7e9ade537e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Combat.Projectile
-  _damage: 15
-  _lifeTime: 3
-  _hitLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  _hitVfxKey: HitVfx
+  _data: {fileID: 11400000, guid: b46de7279e3304a8794601fbf2644e50, type: 2}

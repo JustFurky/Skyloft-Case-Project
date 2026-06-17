@@ -5,10 +5,6 @@ using TMPro;
 
 namespace SkyloftGame.UI
 {
-    /// <summary>
-    /// "Game Won" menüsü: bu turda öldürülen düşman sayısını (animasyonlu) gösterir
-    /// ve sonraki seviyeye geçiş / tekrar / menü seçenekleri sunar.
-    /// </summary>
     public class GameWonView : UIPanel
     {
         [SerializeField] private TMP_Text _runKillsLabel;
@@ -21,19 +17,10 @@ namespace SkyloftGame.UI
         protected override void Awake()
         {
             base.Awake();
-            // TEŞHİS: hangi buton hangi objeye atanmış?
-            Debug.Log($"[GameWonView] Awake | menu={(_menuButton ? _menuButton.name : "NULL")}, " +
-                      $"replay={(_replayButton ? _replayButton.name : "NULL")}, " +
-                      $"next={(_nextLevelButton ? _nextLevelButton.name : "NULL")}");
 
-            // Tıklama anında Instance üzerinden çağır (yakalanan stale/null referans olmasın).
             if (_nextLevelButton != null) _nextLevelButton.onClick.AddListener(() => GameStateManager.Instance.GoToNextLevel());
             if (_replayButton != null)    _replayButton.onClick.AddListener(() => GameStateManager.Instance.ReplayLevel());
-            if (_menuButton != null)      _menuButton.onClick.AddListener(() =>
-            {
-                Debug.Log("[UI] GameWon Menu butonuna tıklandı");   // TEŞHİS
-                GameStateManager.Instance.GoToMenu();
-            });
+            if (_menuButton != null)      _menuButton.onClick.AddListener(() => GameStateManager.Instance.GoToMenu());
         }
 
         protected override void OnBeforeShow()
@@ -54,7 +41,6 @@ namespace SkyloftGame.UI
             if (_totalKillsLabel != null)
                 _totalKillsLabel.text = $"Toplam: {gsm.Score?.TotalKills ?? 0}";
 
-            // Sonraki seviye yoksa butonu gizle.
             if (_nextLevelButton != null)
                 _nextLevelButton.gameObject.SetActive(gsm.Level?.HasNext ?? false);
         }

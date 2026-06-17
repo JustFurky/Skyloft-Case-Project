@@ -1,9 +1,5 @@
 namespace SkyloftGame.States
 {
-    /// <summary>
-    /// Zafer durumu: spawn ve sayaç durdurulur, ilerleme kalıcı kaydedilir.
-    /// "Game Won" menüsü UIController üzerinden gösterilir ve tur öldürme sayısını sunar.
-    /// </summary>
     public class GameWonState : StateMachine.IState
     {
         private readonly GameStateManager _manager;
@@ -13,7 +9,7 @@ namespace SkyloftGame.States
         {
             _manager.Spawner?.StopAndClear();
             _manager.Timer?.Stop();
-            _manager.Level?.MarkCurrentCompleted();   // sonraki seviyeyi aç + diske yaz
+            _manager.Level?.MarkCurrentCompleted();
         }
 
         public void Update()      { }

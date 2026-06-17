@@ -4,27 +4,26 @@ using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.Player
 {
-    /// <summary>
-    /// Oyuncunun canı. IDamageable üzerinden düşman saldırılarını alır.
-    /// Can biterse oyun kaybedilir. Her yeni tur (Playing'e giriş) başında dolar.
-    /// </summary>
     public class PlayerHealth : MonoBehaviour, IDamageable
     {
-        [SerializeField] private float _maxHp = 100f;
+        [Tooltip("Health (maxHp) is read from here. Assign the same asset as PlayerController.")]
+        [SerializeField] private PlayerData _data;
 
-        public float MaxHp     => _maxHp;
+        private const float FallbackMaxHp = 100f;
+
+        public float MaxHp     => _data != null ? _data.maxHp : FallbackMaxHp;
         public float CurrentHp { get; private set; }
         public bool  IsDead    { get; private set; }
 
-        /// <summary>(current, max) — can barı view'ı (PlayerHealthBar) bunu dinler.</summary>
         public event Action<float, float> OnHealthChanged;
 
-        // Canı Awake'te başlat: prefab üstündeki bar, bileşen sırasına bakmadan
-        // OnEnable'da doğru değeri okuyabilsin.
         private void Awake()
         {
+            if (_data == null)
+                Debug.LogError("[PlayerHealth] PlayerData is not assigned; using default health.", this);
+
             IsDead    = false;
-            CurrentHp = _maxHp;
+            CurrentHp = MaxHp;
         }
 
         private void OnEnable()
@@ -44,7 +43,7 @@ namespace SkyloftGame.Player
             if (IsDead || amount <= 0f) return;
 
             CurrentHp = Mathf.Max(0f, CurrentHp - amount);
-            OnHealthChanged?.Invoke(CurrentHp, _maxHp);
+            OnHealthChanged?.Invoke(CurrentHp, MaxHp);
 
             if (CurrentHp <= 0f) Die();
         }
@@ -59,8 +58,8 @@ namespace SkyloftGame.Player
         private void ResetHealth()
         {
             IsDead    = false;
-            CurrentHp = _maxHp;
-            OnHealthChanged?.Invoke(CurrentHp, _maxHp);
+            CurrentHp = MaxHp;
+            OnHealthChanged?.Invoke(CurrentHp, MaxHp);
         }
 
         private void HandleStateChanged(GameStateType previous, GameStateType next)

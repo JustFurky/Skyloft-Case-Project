@@ -3,20 +3,12 @@ using UnityEngine.UI;
 
 namespace SkyloftGame.Player
 {
-    /// <summary>
-    /// Player prefab'ına ait can barı (view). PlayerHealth mantığını dinler ve
-    /// doluluk oranını günceller; isteğe bağlı olarak kameraya döner (billboard).
-    ///
-    /// PlayerHealth, UI'dan habersizdir (SRP). Bar yalnızca durumu yansıtır.
-    /// Her şey aynı prefab üzerinde olduğundan inspector bağlaması sahne-arası
-    /// referans gerektirmez.
-    /// </summary>
     public class PlayerHealthBar : MonoBehaviour
     {
-        [Tooltip("Boş bırakılırsa parent zincirinden otomatik bulunur.")]
+        [Tooltip("If left empty, found automatically from the parent chain.")]
         [SerializeField] private PlayerHealth _health;
 
-        [Tooltip("Image Type = Filled olan doluluk görseli.")]
+        [Tooltip("Fill image with Image Type = Filled.")]
         [SerializeField] private Image _fill;
 
         [SerializeField] private bool _faceCamera = true;

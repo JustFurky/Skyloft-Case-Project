@@ -2,17 +2,6 @@ using UnityEngine;
 
 namespace SkyloftGame.Data
 {
-    /// <summary>
-    /// Singleton MonoBehaviour — oyun verisinin tek erişim noktası.
-    ///
-    /// Bağımlılık enjeksiyonu:
-    ///   Varsayılan servis EncryptedJsonDataService'dir.
-    ///   Test veya farklı platform için Awake öncesinde InjectService() çağrılabilir.
-    ///
-    /// Kullanım:
-    ///   DataManager.Instance.AddEnemyKill();
-    ///   int total = DataManager.Instance.Data.totalEnemiesKilled;
-    /// </summary>
     [DefaultExecutionOrder(-200)]
     public class DataManager : MonoBehaviour
     {
@@ -27,7 +16,6 @@ namespace SkyloftGame.Data
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
 
-            // DontDestroyOnLoad yalnızca root objelerde çalışır; child ise root'a çıkar.
             if (transform.parent != null) transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
 
@@ -38,21 +26,14 @@ namespace SkyloftGame.Data
         private void OnApplicationQuit() => _service.Save(Data);
         private void OnApplicationPause(bool paused) { if (paused) _service.Save(Data); }
 
-        /// <summary>Servis bağımlılığını değiştir (test / platform senaryoları için).</summary>
         public void InjectService(IDataService service)
         {
             _service = service;
             Data     = _service.Load();
         }
 
-        /// <summary>
-        /// Öldürülen düşman sayısını artırır. Performans için her ölümde diske
-        /// yazmaz; kalıcılık seviye sonu (Save), uygulama duraklama/çıkışında garanti edilir.
-        /// Büyük dalgalarda yüzlerce PlayerPrefs yazımını önler.
-        /// </summary>
         public void AddEnemyKill() => Data.totalEnemiesKilled++;
 
-        /// <summary>Verilen seviyeyi (yalnızca daha yüksekse) kalıcı olarak açar ve kaydeder.</summary>
         public void UnlockLevel(int levelIndex)
         {
             if (levelIndex <= Data.highestUnlockedLevel) { _service.Save(Data); return; }
@@ -60,10 +41,14 @@ namespace SkyloftGame.Data
             _service.Save(Data);
         }
 
-        /// <summary>Mevcut veriyi diske yazar (seviye sonu vb. açık kayıt noktaları).</summary>
         public void Save() => _service.Save(Data);
 
-        /// <summary>Tüm kayıtlı veriyi siler ve modeli sıfırlar.</summary>
+        public void ResetLevelProgress()
+        {
+            Data.highestUnlockedLevel = 0;
+            _service.Save(Data);
+        }
+
         public void ResetData()
         {
             _service.Delete();

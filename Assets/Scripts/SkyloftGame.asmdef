@@ -1,0 +1,19 @@
+{
+    "name": "SkyloftGame",
+    "rootNamespace": "SkyloftGame",
+    "references": [
+        "PrimeTween.Runtime",
+        "Unity.TextMeshPro",
+        "UniTask",
+        "JoystickPack"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

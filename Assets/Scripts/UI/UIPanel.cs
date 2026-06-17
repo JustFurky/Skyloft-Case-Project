@@ -3,16 +3,15 @@ using UnityEngine;
 
 namespace SkyloftGame.UI
 {
-    /// <summary>
-    /// Tüm UI panellerinin ortak temeli. CanvasGroup üzerinden PrimeTween ile
-    /// göster/gizle (fade + scale) ve etkileşim kontrolü sağlar. Alt sınıflar
-    /// yalnızca içeriklerini doldurmaya odaklanır (DRY + SRP).
-    /// </summary>
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class UIPanel : MonoBehaviour
     {
         [SerializeField] private float _fadeDuration = 0.25f;
         [SerializeField] private bool  _scaleOnShow  = true;
+
+        [Tooltip("When enabled, the animation runs independently of Time.timeScale. " +
+                 "Required for panels that must be visible while timeScale=0, such as the pause menu.")]
+        [SerializeField] private bool  _useUnscaledTime = false;
 
         protected CanvasGroup CanvasGroup { get; private set; }
         private Sequence _animation;
@@ -22,28 +21,25 @@ namespace SkyloftGame.UI
         {
             CanvasGroup = GetComponent<CanvasGroup>();
 
-            // Başlangıçta gizle — AMA Show() çağrısının tetiklediği SetActive(true)
-            // içinde Awake çalışırsa (panel sahnede pasif başladıysa) paneli yeniden
-            // kapatma; bu yüzden _shown bayrağına bakılır.
             if (!_shown) ApplyHidden();
         }
 
         public void Show()
         {
             _shown = true;
-            gameObject.SetActive(true);   // pasif başlamış panelde Awake'i tetikler; o da _shown'a bakıp gizlemez
+            gameObject.SetActive(true);
             SetInteractable(true);
             OnBeforeShow();
 
-            _animation.Stop();            // varsa önceki animasyonu kes (dead sequence'te güvenli no-op)
+            _animation.Stop();
             CanvasGroup.alpha = 0f;
 
-            _animation = Sequence.Create()
-                .Group(Tween.Alpha(CanvasGroup, 1f, _fadeDuration));
+            _animation = Sequence.Create(useUnscaledTime: _useUnscaledTime)
+                .Group(Tween.Alpha(CanvasGroup, 1f, _fadeDuration, useUnscaledTime: _useUnscaledTime));
 
             if (_scaleOnShow)
                 _animation.Group(Tween.Scale(transform, Vector3.one * 0.85f, Vector3.one,
-                                             _fadeDuration, Ease.OutBack));
+                                             _fadeDuration, Ease.OutBack, useUnscaledTime: _useUnscaledTime));
         }
 
         public void Hide()
@@ -53,12 +49,11 @@ namespace SkyloftGame.UI
             SetInteractable(false);
 
             _animation.Stop();
-            _animation = Sequence.Create()
-                .Group(Tween.Alpha(CanvasGroup, 0f, _fadeDuration))
+            _animation = Sequence.Create(useUnscaledTime: _useUnscaledTime)
+                .Group(Tween.Alpha(CanvasGroup, 0f, _fadeDuration, useUnscaledTime: _useUnscaledTime))
                 .ChainCallback(() => gameObject.SetActive(false));
         }
 
-        /// <summary>Panel görünür olmadan hemen önce; içerik doldurma noktası.</summary>
         protected virtual void OnBeforeShow() { }
 
         private void SetInteractable(bool value)

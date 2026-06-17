@@ -1,5 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using SkyloftGame.Enemy;
@@ -9,32 +10,32 @@ using EnemyUnit = SkyloftGame.Enemy.Enemy;
 
 namespace SkyloftGame.Gameplay
 {
-    /// <summary>
-    /// LevelData'daki dalgaları, oyuncunun etrafındaki NavMesh halkasında üretir.
-    ///
-    /// Optimizasyon notları:
-    ///   - Düşmanlar ObjectPooler üzerinden alınır (Instantiate yok).
-    ///   - LevelData.maxAliveEnemies sınırı dolduğunda spawn duraklatılır; bu,
-    ///     büyük dalgalarda hem fizik hem AI yükünü tavanda tutar.
-    ///   - Canlı sayısı EnemyRegistry'den O(1) okunur.
-    /// </summary>
     public class EnemySpawner : MonoBehaviour, IEnemySpawner
     {
-        [Tooltip("NavMesh üzerinde geçerli spawn noktası ararken kullanılan örnekleme yarıçapı.")]
+        [Tooltip("Sampling radius used when searching for a valid spawn point on the NavMesh.")]
         [SerializeField] private float _navSampleRadius = 3f;
 
-        private readonly List<Coroutine> _waveRoutines = new();
+        [Tooltip("How many candidate points to try when finding a valid NavMesh spawn point.")]
+        [SerializeField] private int _spawnPositionAttempts = 8;
+
+        [Tooltip("Between-wave countdown and blink settings.")]
+        [SerializeField] private WaveSettings _waveSettings;
+
+        private CancellationTokenSource _cts;
         private LevelData _level;
         private Transform _target;
         private int _totalWaves;
         private int _completedWaves;
 
+        public event Action<int> WaveCountdownTick;
+        public event Action       WaveStarted;
+
         public int AliveCount => EnemyRegistry.AliveCount;
 
-        // Tüm dalgalar üretilmiş ve canlı düşman kalmamışsa seviye temizlenmiştir.
-        // _totalWaves > 0 koşulu, spawn başlamadan (canlı 0 iken) yanlış zaferi önler.
         public bool IsCleared =>
             _totalWaves > 0 && _completedWaves >= _totalWaves && AliveCount == 0;
+
+        private void OnDestroy() => CancelRun();
 
         public void BeginLevel(LevelData level, Transform target)
         {
@@ -42,7 +43,7 @@ namespace SkyloftGame.Gameplay
 
             if (level == null || target == null)
             {
-                Debug.LogError("[EnemySpawner] Seviye veya hedef null; spawn başlatılamadı.", this);
+                Debug.LogError("[EnemySpawner] Level or target is null; spawning could not start.", this);
                 return;
             }
 
@@ -51,75 +52,111 @@ namespace SkyloftGame.Gameplay
             _totalWaves     = level.waves?.Length ?? 0;
             _completedWaves = 0;
 
-            if (level.waves == null) return;
-            foreach (var wave in level.waves)
-                _waveRoutines.Add(StartCoroutine(RunWave(wave)));
+            if (_totalWaves == 0) return;
+
+            _cts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            RunLevelAsync(_cts.Token).Forget();
         }
 
         public void StopAndClear()
         {
-            foreach (var routine in _waveRoutines)
-                if (routine != null) StopCoroutine(routine);
-            _waveRoutines.Clear();
+            CancelRun();
 
-            // Sayaçları sıfırla ki durdurulduğunda IsCleared yanlışlıkla true olmasın.
             _totalWaves     = 0;
             _completedWaves = 0;
 
-            // Canlı düşmanları pool'a iade et (snapshot — iade Unregister tetikler).
+            WaveStarted?.Invoke();
+
             foreach (var enemy in EnemyRegistry.Snapshot())
                 if (enemy != null) enemy.ReturnToPool();
         }
 
-        private IEnumerator RunWave(Wave wave)
+        private void CancelRun()
+        {
+            if (_cts == null) return;
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = null;
+        }
+
+        private async UniTaskVoid RunLevelAsync(CancellationToken token)
+        {
+            await UniTask.Yield(token);
+
+            for (int i = 0; i < _level.waves.Length; i++)
+            {
+                if (ShouldCountdownBefore(i))
+                    await CountdownAsync(_waveSettings.betweenWaveCountdown, token);
+                else
+                    WaveStarted?.Invoke();
+
+                await SpawnWaveAsync(_level.waves[i], token);
+                await UniTask.WaitUntil(() => AliveCount == 0, cancellationToken: token);
+
+                _completedWaves++;
+            }
+        }
+
+        private bool ShouldCountdownBefore(int waveIndex)
+            => _waveSettings != null
+               && _waveSettings.betweenWaveCountdown > 0
+               && (waveIndex > 0 || _waveSettings.countdownBeforeFirstWave);
+
+        private async UniTask CountdownAsync(int seconds, CancellationToken token)
+        {
+            for (int s = seconds; s > 0; s--)
+            {
+                WaveCountdownTick?.Invoke(s);
+                await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
+            }
+            WaveStarted?.Invoke();
+        }
+
+        private async UniTask SpawnWaveAsync(Wave wave, CancellationToken token)
         {
             if (wave.startDelay > 0f)
-                yield return new WaitForSeconds(wave.startDelay);
-
-            var interval = new WaitForSeconds(wave.spawnInterval);
+                await UniTask.Delay(TimeSpan.FromSeconds(wave.startDelay), cancellationToken: token);
 
             for (int i = 0; i < wave.count; i++)
             {
-                // Canlı limiti aşıldıysa yer açılana kadar bekle (optimizasyon kapısı).
-                while (AliveCount >= _level.maxAliveEnemies)
-                    yield return null;
+                await UniTask.WaitUntil(() => AliveCount < _level.maxAliveEnemies, cancellationToken: token);
 
-                SpawnOne(wave.enemyPoolKey);
-                yield return interval;
+                SpawnOne(wave.enemy);
+                await UniTask.Delay(TimeSpan.FromSeconds(wave.spawnInterval), cancellationToken: token);
             }
-
-            _completedWaves++;   // bu dalganın tüm düşmanları üretildi
         }
 
-        private void SpawnOne(string poolKey)
+        private void SpawnOne(PoolId pool)
         {
-            if (!TryGetSpawnPosition(out Vector3 position)) return;
+            if (pool == null || !TryGetSpawnPosition(out Vector3 position)) return;
 
-            // Doğar doğmaz oyuncuya dönük gelsin (NavMesh'in yavaş dönüşünü beklemeden).
             Vector3 toTarget = _target.position - position;
             toTarget.y = 0f;
             Quaternion rotation = toTarget.sqrMagnitude > 0.001f
                 ? Quaternion.LookRotation(toTarget)
                 : Quaternion.identity;
 
-            var enemy = ObjectPooler.Instance.Get<EnemyUnit>(poolKey, position, rotation);
-            enemy?.SetTarget(_target);   // hedefi enjekte et (FindWithTag yerine)
+            var enemy = ObjectPooler.Instance.Get<EnemyUnit>(pool, position, rotation);
+            enemy?.SetTarget(_target);
         }
 
-        /// <summary>Oyuncu etrafındaki halkada NavMesh'e oturan rastgele bir nokta bulur.</summary>
         private bool TryGetSpawnPosition(out Vector3 position)
         {
-            Vector2 ring   = Random.insideUnitCircle.normalized *
-                             Random.Range(_level.minSpawnDistance, _level.spawnRadius);
-            Vector3 candidate = _target.position + new Vector3(ring.x, 0f, ring.y);
-
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _navSampleRadius, NavMesh.AllAreas))
+            int attempts = Mathf.Max(1, _spawnPositionAttempts);
+            for (int i = 0; i < attempts; i++)
             {
-                position = hit.position;
-                return true;
+                Vector2 ring      = UnityEngine.Random.insideUnitCircle.normalized *
+                                    UnityEngine.Random.Range(_level.minSpawnDistance, _level.spawnRadius);
+                Vector3 candidate = _target.position + new Vector3(ring.x, 0f, ring.y);
+
+                if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, _navSampleRadius, NavMesh.AllAreas))
+                {
+                    position = hit.position;
+                    return true;
+                }
             }
 
-            position = candidate;
+            position = _target.position;
             return false;
         }
     }

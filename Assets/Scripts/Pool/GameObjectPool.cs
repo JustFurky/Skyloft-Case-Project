@@ -1,49 +1,45 @@
 using UnityEngine;
 using UnityEngine.Pool;
+using SkyloftGame.VFX;
 
 namespace SkyloftGame.Pool
 {
     public class GameObjectPool
     {
-        private readonly PoolConfig             _config;
+        private readonly PoolId                 _id;
         private readonly Transform              _root;
         private readonly ObjectPool<GameObject> _pool;
+
+        private bool _autoParticleWarned;
 
         public int CountAll      => _pool.CountAll;
         public int CountActive   => _pool.CountActive;
         public int CountInactive => _pool.CountInactive;
 
-        public GameObjectPool(PoolConfig config, Transform root)
+        public GameObjectPool(PoolId id, Transform root)
         {
-            _config = config;
-            _root   = root;
+            _id   = id;
+            _root = root;
 
-            // actionOnGet bilerek atanmadı: nesne, KONUMLANDIRILDIKTAN sonra aktive
-            // edilip OnSpawn alacak (bkz. Spawn). Bu sıra, NavMeshAgent gibi
-            // bileşenlerin doğru pozisyonda NavMesh'e yerleşmesi için kritiktir.
             _pool = new ObjectPool<GameObject>(
                 createFunc:      OnCreate,
                 actionOnGet:     null,
                 actionOnRelease: OnRelease,
                 actionOnDestroy: obj => Object.Destroy(obj),
-                collectionCheck: config.collectionChecks,
-                defaultCapacity: config.initialSize,
-                maxSize:         config.maxSize > 0 ? config.maxSize : int.MaxValue
+                collectionCheck: id.collectionChecks,
+                defaultCapacity: id.initialSize,
+                maxSize:         id.maxSize > 0 ? id.maxSize : int.MaxValue
             );
 
-            Prewarm(config.initialSize);
+            Prewarm(id.initialSize);
         }
 
-        /// <summary>
-        /// Havuzdan nesne alır, önce konumlandırır, SONRA aktive edip OnSpawn çağırır.
-        /// Önce-konumlandır-sonra-aktive et sırası NavMeshAgent yerleşimi için şarttır.
-        /// </summary>
         public GameObject Spawn(Vector3 position, Quaternion rotation)
         {
-            var obj = _pool.Get();                                   // pasif gelir (kök inaktif)
-            obj.transform.SetParent(null);                          // aktif hiyerarşiye çıkar
-            obj.transform.SetPositionAndRotation(position, rotation); // önce yerleştir
-            obj.SetActive(true);                                     // sonra aktive et
+            var obj = _pool.Get();
+            obj.transform.SetParent(null);
+            obj.transform.SetPositionAndRotation(position, rotation);
+            obj.SetActive(true);
 
             foreach (var p in obj.GetComponentsInChildren<IPoolable>(true))
                 p.OnSpawn();
@@ -56,18 +52,35 @@ namespace SkyloftGame.Pool
 
         private GameObject OnCreate()
         {
-            var obj    = Object.Instantiate(_config.prefab, _root);
-            obj.name   = $"{_config.prefab.name}_{CountAll}";
+            var obj    = Object.Instantiate(_id.prefab, _root);
+            obj.name   = $"{_id.prefab.name}_{CountAll}";
             var pooled = obj.GetComponent<PooledObject>() ?? obj.AddComponent<PooledObject>();
-            pooled.PoolKey = _config.key;
+            pooled.PoolKey = _id;
+
+            EnsureSelfRelease(obj);
+
             obj.SetActive(false);
             return obj;
         }
 
+        private void EnsureSelfRelease(GameObject obj)
+        {
+            if (obj.GetComponentInChildren<IPoolable>(true) != null) return;
+            if (obj.GetComponent<ParticleSystem>() == null) return;
+
+            obj.AddComponent<PooledParticle>();
+
+            if (!_autoParticleWarned)
+            {
+                _autoParticleWarned = true;
+                Debug.LogWarning($"[Pool] Prefab '{_id.name}' had no PooledParticle; one was added " +
+                                 $"automatically (release guaranteed). For a permanent setup, add " +
+                                 $"PooledParticle to the prefab root.", _id.prefab);
+            }
+        }
+
         private void OnRelease(GameObject obj)
         {
-            // Yalnızca gerçekten spawn olmuş (aktif) nesnelerde OnDespawn çağır;
-            // prewarm sırasında nesne hiç aktive edilmediğinden atlanır.
             if (obj.activeSelf)
                 foreach (var p in obj.GetComponentsInChildren<IPoolable>(true))
                     p.OnDespawn();
@@ -79,7 +92,6 @@ namespace SkyloftGame.Pool
         private void Prewarm(int count)
         {
             if (count <= 0) return;
-            // Nesneler pasif kalır; OnSpawn tetiklenmez (NavMeshAgent erken Resume hatası önlenir).
             var buffer = new GameObject[count];
             for (int i = 0; i < count; i++) buffer[i] = _pool.Get();
             for (int i = 0; i < count; i++) _pool.Release(buffer[i]);

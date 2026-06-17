@@ -4,19 +4,19 @@ using TMPro;
 
 namespace SkyloftGame.UI
 {
-    /// <summary>
-    /// Ana menü: oyunu başlatma ve kalıcı ilerleme özeti.
-    /// </summary>
     public class MainMenuView : UIPanel
     {
         [SerializeField] private Button     _startButton;
+        [SerializeField] private Button     _newGameButton;
         [SerializeField] private TMP_Text   _progressLabel;
 
         protected override void Awake()
         {
             base.Awake();
             if (_startButton != null)
-                _startButton.onClick.AddListener(() => GameStateManager.Instance.StartNewGame());
+                _startButton.onClick.AddListener(() => GameStateManager.Instance.ContinueGame());
+            if (_newGameButton != null)
+                _newGameButton.onClick.AddListener(() => GameStateManager.Instance.StartNewGame());
         }
 
         protected override void OnBeforeShow()

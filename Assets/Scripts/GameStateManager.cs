@@ -5,31 +5,19 @@ using SkyloftGame.States;
 using SkyloftGame.Level;
 using SkyloftGame.Gameplay;
 
-/// <summary>
-/// Oyunun kompozisyon kökü (composition root) ve durum makinesi sürücüsü.
-///
-/// Alt sistemleri (seviye, spawner, skor, sayaç) tek noktada toplar ve onları
-/// arayüz tipleri üzerinden state'lere sunar (DIP). State'ler somut sınıflara
-/// değil ILevelService / IEnemySpawner / IScoreService / ICountdownTimer'a bağlıdır.
-/// UI ve oyuncu, OnStateChanged olayına abone olarak gevşek bağlı kalır.
-///
-/// Bu manager, tüketicilerden (UI/oyuncu) önce çalışacak şekilde erken yürütme
-/// sırasına alınır; böylece Instance ve durum makinesi herkesten önce hazırdır.
-/// </summary>
 [DefaultExecutionOrder(-100)]
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance { get; private set; }
 
-    [Header("Alt Sistemler (sahne referansları)")]
+    [Header("Subsystems (scene references)")]
     [SerializeField] private LevelManager _levelManager;
     [SerializeField] private EnemySpawner _enemySpawner;
     [SerializeField] private ScoreService _scoreService;
 
-    [Header("Başlangıç")]
+    [Header("Startup")]
     [SerializeField] private GameStateType _initialState = GameStateType.Menu;
 
-    // Arayüz üzerinden açılan bağımlılıklar
     public ILevelService   Level   => _levelManager;
     public IEnemySpawner   Spawner => _enemySpawner;
     public IScoreService   Score   => _scoreService;
@@ -73,10 +61,6 @@ public class GameStateManager : MonoBehaviour
     private void Update()      => _machine.Update();
     private void FixedUpdate() => _machine.FixedUpdate();
 
-    // ----------------------------------------------------------------- //
-    //  Genel durum geçişleri
-    // ----------------------------------------------------------------- //
-
     public void ChangeState(GameStateType state) => _machine.TransitionTo(state);
 
     public void GoToMenu()  => ChangeState(GameStateType.Menu);
@@ -84,21 +68,24 @@ public class GameStateManager : MonoBehaviour
     public void WinGame()   => ChangeState(GameStateType.GameWon);
     public void LoseGame()  => ChangeState(GameStateType.GameLost);
 
-    // ----------------------------------------------------------------- //
-    //  Üst seviye akış komutları (UI butonları bunları çağırır)
-    // ----------------------------------------------------------------- //
-
-    /// <summary>İlk seviyeden yeni oyun başlatır.</summary>
     public void StartNewGame()
     {
+        SkyloftGame.Data.DataManager.Instance?.ResetLevelProgress();
         Level?.Load(0);
         StartGame();
     }
 
-    /// <summary>Mevcut seviyeyi yeniden oynatır (kazanma/kaybetme ekranından).</summary>
+    public void ContinueGame()
+    {
+        if (Level == null) { StartGame(); return; }
+
+        int index = Mathf.Clamp(Level.HighestUnlockedIndex, 0, Mathf.Max(0, Level.Count - 1));
+        Level.Load(index);
+        StartGame();
+    }
+
     public void ReplayLevel() => StartGame();
 
-    /// <summary>Sonraki seviyeye geçer; yoksa menüye döner.</summary>
     public void GoToNextLevel()
     {
         if (Level != null && Level.TryAdvance()) StartGame();
@@ -107,7 +94,6 @@ public class GameStateManager : MonoBehaviour
 
     private void HandleTimerElapsed()
     {
-        // Süre dolunca, yalnızca oynanış sürerken zaferi tetikle.
         if (CurrentState == GameStateType.Playing) WinGame();
     }
 }

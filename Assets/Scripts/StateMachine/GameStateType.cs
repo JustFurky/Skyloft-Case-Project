@@ -1,9 +1,5 @@
 namespace SkyloftGame.StateMachine
 {
-    /// <summary>
-    /// Oyun genelinde kullanılan durum türlerini tanımlar.
-    /// GameStateManager geçişleri bu enum üzerinden yönetir.
-    /// </summary>
     public enum GameStateType
     {
         None    = 0,

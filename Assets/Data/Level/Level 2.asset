@@ -16,14 +16,14 @@ MonoBehaviour:
   displayName: Level 2
   durationSeconds: 180
   waves:
-  - enemyPoolKey: Enemy
+  - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
     count: 15
-    spawnInterval: 0.75
+    spawnInterval: 0.3
     startDelay: 2
-  - enemyPoolKey: Enemy
+  - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
     count: 25
-    spawnInterval: 0.75
+    spawnInterval: 0.3
     startDelay: 2
   spawnRadius: 14
-  minSpawnDistance: 7
+  minSpawnDistance: 4
   maxAliveEnemies: 60

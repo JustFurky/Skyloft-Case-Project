@@ -2,10 +2,6 @@ using System;
 
 namespace SkyloftGame.Gameplay
 {
-    /// <summary>
-    /// Çerçeveden bağımsız, test edilebilir geri sayım sayacı.
-    /// Update döngüsü yoktur; sahibi her karede Tick(deltaTime) çağırır.
-    /// </summary>
     public sealed class CountdownTimer : ICountdownTimer
     {
         public float Remaining { get; private set; }

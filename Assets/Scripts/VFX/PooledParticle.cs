@@ -3,11 +3,6 @@ using SkyloftGame.Pool;
 
 namespace SkyloftGame.VFX
 {
-    /// <summary>
-    /// Havuzlanan tek-atımlık parçacık efekti (isabet, ölüm patlaması vb.).
-    /// Spawn'da baştan oynatılır ve süresi dolunca otomatik pool'a iade edilir.
-    /// Böylece partikül efektleri de sıfır-Instantiate maliyetiyle yönetilir.
-    /// </summary>
     [RequireComponent(typeof(ParticleSystem))]
     [RequireComponent(typeof(PooledObject))]
     public class PooledParticle : MonoBehaviour, IPoolable

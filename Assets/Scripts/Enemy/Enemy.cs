@@ -10,14 +10,17 @@ namespace SkyloftGame.Enemy
     [RequireComponent(typeof(PooledObject))]
     public class Enemy : MonoBehaviour, IPoolable, IDamageable
     {
-        [Header("Veri")]
+        [Header("Data")]
         [SerializeField] private EnemyData _data;
 
-        [Header("Görsel Geri Bildirim")]
+        [Header("Visual Feedback")]
         [SerializeField] private Renderer _bodyRenderer;
 
-        [Tooltip("Ölüm anında oynatılacak partikül efekti pool anahtarı (opsiyonel).")]
-        [SerializeField] private string _deathVfxKey = "DeathVfx";
+        [Tooltip("Particle effect pool played on spawn (optional).")]
+        [SerializeField] private PoolId _spawnVfx;
+
+        [Tooltip("Particle effect pool played on death (optional).")]
+        [SerializeField] private PoolId _deathVfx;
 
         public event Action<float, float> OnDamaged;
         public event Action<Enemy>        OnDied;
@@ -44,7 +47,7 @@ namespace SkyloftGame.Enemy
         {
             if (_data == null)
             {
-                Debug.LogError($"[Enemy] EnemyData atanmamış: {name}", this);
+                Debug.LogError($"[Enemy] EnemyData is not assigned: {name}", this);
                 _pooledObject.Release();
                 return;
             }
@@ -52,12 +55,13 @@ namespace SkyloftGame.Enemy
             IsDead    = false;
             CurrentHp = _data.maxHp;
 
-            // Hedefi her spawn'da FindWithTag ile aramak yerine merkezi locator'dan al.
             _ai.Init(_data, PlayerLocator.Current);
             _ai.StartAI();
 
             SetRendererColor(Color.white);
             EnemyRegistry.Register(this);
+
+            SpawnVfx(_spawnVfx);
         }
 
         public void OnDespawn()
@@ -87,7 +91,6 @@ namespace SkyloftGame.Enemy
 
         public void SetTarget(Transform newTarget) => _ai.SetTarget(newTarget);
 
-        /// <summary>Düşmanı (öldürmeden) güvenli biçimde pool'a iade eder — seviye temizliği için.</summary>
         public void ReturnToPool() => _pooledObject.Release();
 
         private void Die()
@@ -95,17 +98,18 @@ namespace SkyloftGame.Enemy
             if (IsDead) return;
             IsDead = true;
 
-            // Skor sistemi tek kill kanalı olarak buna abonedir (DataManager bağımlılığı yok).
             EnemyRegistry.NotifyKilled(this);
             SpawnDeathVfx();
             OnDied?.Invoke(this);
             _pooledObject.Release();
         }
 
-        private void SpawnDeathVfx()
+        private void SpawnDeathVfx() => SpawnVfx(_deathVfx);
+
+        private void SpawnVfx(PoolId vfx)
         {
-            if (string.IsNullOrEmpty(_deathVfxKey) || ObjectPooler.Instance == null) return;
-            ObjectPooler.Instance.Get(_deathVfxKey, transform.position, Quaternion.identity);
+            if (vfx == null || ObjectPooler.Instance == null) return;
+            ObjectPooler.Instance.Get(vfx, transform.position, Quaternion.identity);
         }
 
         private IEnumerator HitFlashRoutine()

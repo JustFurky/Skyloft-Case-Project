@@ -1,42 +1,35 @@
 using UnityEngine;
+using UnityEngine.AI;
 using SkyloftGame.Core;
 using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.Player
 {
-    /// <summary>
-    /// CharacterController tabanlı 3B oyuncu hareketi. Girdiyi IMoveInput
-    /// kaynağından alır; yalnızca Playing durumunda kontrol açıktır.
-    ///
-    /// Sorumluluğu hareket + yönelim + alan sınırıdır (SRP). Saldırı PlayerShooter,
-    /// can PlayerHealth, animasyon PlayerAnimator'dadır.
-    /// </summary>
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
-        [Header("Girdi")]
-        [SerializeField] private MovementInputSource _moveSource;
+        [Header("Input")]
+        [Tooltip("The FloatingJoystick in the scene (Joystick Pack). Direction is read directly.")]
+        [SerializeField] private Joystick _joystick;
 
-        [Header("Hareket")]
-        [SerializeField] private float _moveSpeed      = 6f;
-        [SerializeField] private float _rotationSpeed  = 720f;   // derece/saniye
-        [SerializeField] private float _gravity        = -20f;
-
-        [Header("Oyun Alanı Sınırı")]
-        [Tooltip("Açıkken oyuncu, merkez etrafında yarıçap içinde tutulur (alandan düşmez).")]
-        [SerializeField] private bool    _clampToArena = true;
-        [SerializeField] private Vector3 _arenaCenter  = Vector3.zero;
-        [Min(1f)] [SerializeField] private float _arenaRadius = 24f;
+        [Header("Data")]
+        [Tooltip("Movement, rotation, gravity and arena boundary parameters.")]
+        [SerializeField] private PlayerData _data;
 
         private CharacterController _cc;
         private PlayerTargeting     _targeting;
         private float _verticalVelocity;
         private bool  _controlEnabled;
 
+        private const float NavSnapMaxDistance = 2.5f;
+
         private void Awake()
         {
             _cc        = GetComponent<CharacterController>();
             _targeting = GetComponent<PlayerTargeting>();
+
+            if (_data == null)
+                Debug.LogError("[PlayerController] PlayerData is not assigned; the player will not move.", this);
         }
 
         private void OnEnable()
@@ -59,38 +52,38 @@ namespace SkyloftGame.Player
 
         private void Update()
         {
-            Vector2 input = _controlEnabled && _moveSource != null ? _moveSource.Direction : Vector2.zero;
+            if (_data == null) return;
+
+            Vector2 input = _controlEnabled && _joystick != null ? _joystick.Direction : Vector2.zero;
             Vector3 move  = new(input.x, 0f, input.y);
 
             ApplyGravity();
             Move(move);
-            if (_clampToArena) ClampToArena();
+            if (_data.clampToArena && move.sqrMagnitude > 0f) ClampToArena();
             Rotate(move);
         }
 
         private void ApplyGravity()
         {
             if (_cc.isGrounded && _verticalVelocity < 0f) _verticalVelocity = -2f;
-            else _verticalVelocity += _gravity * Time.deltaTime;
+            else _verticalVelocity += _data.gravity * Time.deltaTime;
         }
 
         private void Move(Vector3 planarDir)
         {
-            Vector3 velocity = planarDir * _moveSpeed;
+            Vector3 velocity = planarDir * _data.moveSpeed;
             velocity.y = _verticalVelocity;
             _cc.Move(velocity * Time.deltaTime);
         }
 
         private void Rotate(Vector3 moveDir)
         {
-            // Hedef varken: hareket etse bile hedefe dönük kal (nişanı bırakma).
-            // Hedef yokken: hareket yönüne dön.
             Vector3 faceDir = AimDirection(moveDir);
             if (faceDir.sqrMagnitude < 0.0001f) return;
 
             Quaternion target = Quaternion.LookRotation(faceDir, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(
-                transform.rotation, target, _rotationSpeed * Time.deltaTime);
+                transform.rotation, target, _data.rotationSpeed * Time.deltaTime);
         }
 
         private Vector3 AimDirection(Vector3 moveDir)
@@ -104,28 +97,30 @@ namespace SkyloftGame.Player
             return moveDir;
         }
 
-        /// <summary>Oyuncuyu alan merkezinin yarıçapı içinde tutar (kenardan düşmeyi engeller).</summary>
         private void ClampToArena()
         {
-            Vector3 pos  = transform.position;
-            Vector3 flat = new(pos.x - _arenaCenter.x, 0f, pos.z - _arenaCenter.z);
+            Vector3 pos = transform.position;
 
-            if (flat.sqrMagnitude <= _arenaRadius * _arenaRadius) return;
+            if (!NavMesh.SamplePosition(pos, out NavMeshHit sample, NavSnapMaxDistance, NavMesh.AllAreas))
+                return;
 
-            Vector3 clamped = _arenaCenter + flat.normalized * _arenaRadius;
-            transform.position = new Vector3(clamped.x, pos.y, clamped.z);
+            Vector3 clamped = sample.position;
+
+            float pad = _data.edgePadding;
+            if (pad > 0f && NavMesh.FindClosestEdge(clamped, out NavMeshHit edge, NavMesh.AllAreas)
+                         && edge.distance < pad)
+            {
+                Vector3 inward = clamped - edge.position;
+                inward.y = 0f;
+                clamped  = edge.position + (inward.sqrMagnitude > 1e-6f ? inward.normalized : edge.normal) * pad;
+            }
+
+            clamped.y = pos.y;
+            if ((clamped - pos).sqrMagnitude > 1e-6f)
+                transform.position = clamped;
         }
 
         private void HandleStateChanged(GameStateType previous, GameStateType next)
             => _controlEnabled = next == GameStateType.Playing;
-
-#if UNITY_EDITOR
-        private void OnDrawGizmosSelected()
-        {
-            if (!_clampToArena) return;
-            UnityEditor.Handles.color = new Color(0.2f, 0.6f, 1f, 0.8f);
-            UnityEditor.Handles.DrawWireDisc(_arenaCenter, Vector3.up, _arenaRadius);
-        }
-#endif
     }
 }

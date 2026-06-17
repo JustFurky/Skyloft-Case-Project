@@ -1,37 +1,37 @@
 using UnityEngine;
+using SkyloftGame.Audio;
 using SkyloftGame.Combat;
 using SkyloftGame.Pool;
 using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.Player
 {
-    /// <summary>
-    /// PlayerTargeting'in kilitlediği hedefe otomatik ateş eden silah denetleyicisi.
-    /// Hedef algılama PlayerTargeting'e aittir (tek kaynak); burada yalnızca ateş
-    /// mantığı vardır (SRP). Mermiler ObjectPooler'dan alınır (Instantiate/Destroy yok).
-    /// Nişan (gövdenin hedefe dönmesi) PlayerController tarafından sürdürülür.
-    /// </summary>
     [RequireComponent(typeof(PlayerTargeting))]
     public class PlayerShooter : MonoBehaviour
     {
-        [Header("Pool")]
-        [SerializeField] private string _projectilePoolKey = "Projectile";
+        [Header("Weapon")]
+        [Tooltip("Data holding fire rate, projectile speed and the projectile pool key.")]
+        [SerializeField] private WeaponData _weapon;
 
-        [Header("Ateş")]
+        [Header("Fire")]
         [SerializeField] private Transform _muzzle;
-        [SerializeField] private float _fireRate        = 4f;    // saniyede mermi
-        [SerializeField] private float _projectileSpeed = 18f;
 
-        [Header("VFX (opsiyonel)")]
+        [Header("VFX (optional)")]
         [SerializeField] private ParticleSystem _muzzleFlash;
 
         private PlayerTargeting _targeting;
         private float _cooldown;
 
-        private void Awake() => _targeting = GetComponent<PlayerTargeting>();
+        private void Awake()
+        {
+            _targeting = GetComponent<PlayerTargeting>();
+            if (_weapon == null)
+                Debug.LogError("[PlayerShooter] WeaponData is not assigned; cannot fire.", this);
+        }
 
         private void Update()
         {
+            if (_weapon == null) return;
             if (GameStateManager.Instance == null ||
                 GameStateManager.Instance.CurrentState != GameStateType.Playing)
                 return;
@@ -43,7 +43,7 @@ namespace SkyloftGame.Player
             if (target == null) return;
 
             FireAt(target.position);
-            _cooldown = 1f / Mathf.Max(0.01f, _fireRate);
+            _cooldown = 1f / Mathf.Max(0.01f, _weapon.fireRate);
         }
 
         private void FireAt(Vector3 targetPosition)
@@ -55,10 +55,11 @@ namespace SkyloftGame.Player
             if (direction.sqrMagnitude < 0.001f) return;
 
             var projectile = ObjectPooler.Instance.Get<Projectile>(
-                _projectilePoolKey, origin, Quaternion.LookRotation(direction, Vector3.up));
-            projectile?.Launch(direction, _projectileSpeed);
+                _weapon.projectile, origin, Quaternion.LookRotation(direction, Vector3.up));
+            projectile?.Launch(direction, _weapon.projectileSpeed);
 
             if (_muzzleFlash != null) _muzzleFlash.Play();
+            AudioEvents.Play(AudioCue.Shoot);
         }
     }
 }

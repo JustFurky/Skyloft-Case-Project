@@ -172,14 +172,62 @@ PrefabInstance:
       value: p_Player
       objectReference: {fileID: 0}
     - target: {fileID: 8484420268758131034, guid: eed731cfe666543168d37265fca0ecd5, type: 3}
+      propertyPath: _joystick
+      value: 
+      objectReference: {fileID: 3935927208275575118}
+    - target: {fileID: 8484420268758131034, guid: eed731cfe666543168d37265fca0ecd5, type: 3}
       propertyPath: _moveSource
       value: 
-      objectReference: {fileID: 6370384614342706763}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eed731cfe666543168d37265fca0ecd5, type: 3}
+--- !u!1 &175359290
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 175359291}
+  - component: {fileID: 175359292}
+  m_Layer: 0
+  m_Name: Pause Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &175359291
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175359290}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1524510237}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &175359292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175359290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c45acc0b16484b65a19ba194b0f6617, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SkyloftGame::SkyloftGame.Gameplay.PauseController
 --- !u!1 &302806721
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,6 +260,135 @@ Transform:
   - {fileID: 2051367004}
   - {fileID: 1916659786}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &316715003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 316715005}
+  - component: {fileID: 316715004}
+  m_Layer: 0
+  m_Name: AudioSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &316715004
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316715003}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &316715005
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316715003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 330585546}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
@@ -304,7 +481,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 14, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 316715005}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
 --- !u!114 &330585547
@@ -539,6 +717,61 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2061c833cb2e4500bba9f0ed3490a87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Gameplay.ScoreService
+--- !u!1 &569570284
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 569570285}
+  - component: {fileID: 569570286}
+  m_Layer: 0
+  m_Name: Audio Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &569570285
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569570284}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1524510237}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &569570286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569570284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 170d8a78692d840188b169a73de9dd19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SkyloftGame::SkyloftGame.Audio.AudioManager
+  _musicSource: {fileID: 0}
+  _sfxSource: {fileID: 316715004}
+  _menuMusic: {fileID: 0}
+  _gameplayMusic: {fileID: 0}
+  _cues:
+  - cue: 0
+    clip: {fileID: 8300000, guid: 321feb9f51af885488e5ed433aecd467, type: 3}
+    volume: 0.4
+  - cue: 2
+    clip: {fileID: 8300000, guid: 64fb9477894fa2e4a997518fbb1c2f15, type: 3}
+    volume: 0.1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,6 +955,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Gameplay.EnemySpawner
   _navSampleRadius: 3
+  _spawnPositionAttempts: 8
+  _waveSettings: {fileID: 11400000, guid: 5843ad665f5fc46f6aaea4cb76b629aa, type: 2}
 --- !u!1 &1275553972
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,6 +1071,8 @@ Transform:
   - {fileID: 1200184611}
   - {fileID: 425117775}
   - {fileID: 1984141353}
+  - {fileID: 569570285}
+  - {fileID: 175359291}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1874687441
@@ -882,24 +1119,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dff10b579ab5b454ba81a1227767f95f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Pool.ObjectPooler
-  _configs:
-  - key: Projectile
-    prefab: {fileID: 4958003368850383503, guid: e16913230758e4d34a5ce201e17cc440, type: 3}
-    initialSize: 30
-    maxSize: 50
-    collectionChecks: 1
-  - key: HitVfx
-    prefab: {fileID: 841981250674568551, guid: a3822834a700842a7bbbf770b4ccfdec, type: 3}
-    initialSize: 15
-    maxSize: 30
-    collectionChecks: 1
-  - key: DeathVfx
-    prefab: {fileID: 3304592018092165603, guid: 095d3da7adaf947cabd212fc54c82590, type: 3}
-    initialSize: 15
-    maxSize: 30
-    collectionChecks: 1
-  _configAssets:
-  - {fileID: 11400000, guid: 69443f9c11d694cf2992b4482b06cf53, type: 2}
+  _prewarm:
+  - {fileID: 11400000, guid: 79f22081d9c924e4089089d4ac5c4c4c, type: 2}
+  - {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
+  - {fileID: 11400000, guid: 3aed1616ec0c64eecaeb32d0977045c8, type: 2}
+  - {fileID: 11400000, guid: bcb65ccc34dca414e90ecfeafd267732, type: 2}
+  - {fileID: 11400000, guid: e8a9551aa04b3420a95115f7984b00b4, type: 2}
 --- !u!4 &1916659786 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 108877537790078212, guid: eed731cfe666543168d37265fca0ecd5, type: 3}
@@ -1020,7 +1245,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: c5fcf65ba5cc84446801bbb398eb6550, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1107,6 +1332,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 688674564433869682, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_fontSize
+      value: 85.75
+      objectReference: {fileID: 0}
     - target: {fileID: 773701894932680757, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1187,30 +1416,71 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1291468707788763305, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 642
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -262.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2042194406590712042, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 468
+      objectReference: {fileID: 0}
     - target: {fileID: 2819808793073507634, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
       propertyPath: m_Name
       value: GamePlay_Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 642
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -175
+      objectReference: {fileID: 0}
     - target: {fileID: 4635755079530086241, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
       propertyPath: _dynamic
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5310704127774385030, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
---- !u!114 &6370384614342706763 stripped
+--- !u!114 &3935927208275575118 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4635755079530086241, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7974241955976571143, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
   m_PrefabInstance: {fileID: 3935927208275575117}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cf56a02ce88042ae8bd3cb1beef4c79, type: 3}
+  m_Script: {fileID: 11500000, guid: 7a47f546fc70ec8428172694e78e4288, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.VirtualJoystick
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

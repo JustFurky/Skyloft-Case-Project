@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 097782735540f2d4db5606eae04ae6a7, type: 3}
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -127,8 +127,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 2.5}
-  m_SizeDelta: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 2.5371}
+  m_SizeDelta: {x: 1.5, y: 0.35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6074935271322948832
 Canvas:
@@ -356,12 +356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerController
   _moveSource: {fileID: 0}
-  _moveSpeed: 6
-  _rotationSpeed: 720
-  _gravity: -20
-  _clampToArena: 1
-  _arenaCenter: {x: 0, y: 0, z: 0}
-  _arenaRadius: 24
+  _data: {fileID: 11400000, guid: 2491bfc4d2f0a45dbb903d6a60f82fd1, type: 2}
 --- !u!114 &7228019061542880219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,7 +369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e62135fbb79e546c686e0a3e13c2da2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerHealth
-  _maxHp: 100
+  _data: {fileID: 11400000, guid: 2491bfc4d2f0a45dbb903d6a60f82fd1, type: 2}
 --- !u!114 &4414362441482476194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,10 +382,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f01f9ba0f6a4b4337a3310d15a9f03d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerShooter
-  _projectilePoolKey: Projectile
+  _weapon: {fileID: 11400000, guid: 7c339ceea3f9640faa2a410ca0605a02, type: 2}
   _muzzle: {fileID: 3467743165628183161}
-  _fireRate: 4
-  _projectileSpeed: 18
   _muzzleFlash: {fileID: 0}
 --- !u!114 &1067169842350813323
 MonoBehaviour:
@@ -404,11 +397,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589b985a8eb4143b98936937d7286235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerTargeting
-  _range: 12
+  _range: 8
   _targetLayers:
     serializedVersion: 2
     m_Bits: 64
-  _maxCandidates: 32
+  _maxCandidates: 16
 --- !u!114 &6737333792605958608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -424,11 +417,7 @@ MonoBehaviour:
   _animator: {fileID: 3684294208484146327}
   _cc: {fileID: 2899677592043772463}
   _targeting: {fileID: 1067169842350813323}
-  _idleState: Rifle Idle
-  _runState: Rifle Run
-  _fireState: Firing Rifle
-  _crossFade: 0.1
-  _moveThreshold: 0.15
+  _animData: {fileID: 11400000, guid: d629d2420e8f54871aa2d3d87bbfee5f, type: 2}
 --- !u!4 &2287224137076815143 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: 609dcc3555814462aa7f915b4d814689, type: 3}

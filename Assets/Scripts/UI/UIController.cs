@@ -3,11 +3,6 @@ using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.UI
 {
-    /// <summary>
-    /// Oyun durumunu ilgili panele eşleyen tek yönlendirici (router).
-    /// Paneller durumu kendileri dinlemek yerine buradan yönetilir; bu sayede
-    /// hangi durumda hangi ekranın görüneceği tek yerde tanımlıdır (KISS).
-    /// </summary>
     public class UIController : MonoBehaviour
     {
         [SerializeField] private UIPanel _menuPanel;
@@ -30,7 +25,6 @@ namespace SkyloftGame.UI
 
         private void HandleStateChanged(GameStateType previous, GameStateType next)
         {
-            Debug.Log($"[UI] HandleStateChanged {previous}->{next} | menuPanel atanmış mı: {_menuPanel != null}");   // TEŞHİS
             Toggle(_menuPanel,     next == GameStateType.Menu);
             Toggle(_hudPanel,      next == GameStateType.Playing);
             Toggle(_gameWonPanel,  next == GameStateType.GameWon);

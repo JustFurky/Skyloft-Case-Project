@@ -1,5 +1,6 @@
 using System;
-using System.Collections;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,7 +9,6 @@ namespace SkyloftGame.Enemy
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyAI : MonoBehaviour
     {
-        /// <summary>Davranış durumu değiştiğinde yayınlanır (animasyon köprüsü için).</summary>
         public event Action<EnemyStateType> OnStateChanged;
 
         public NavMeshAgent Agent => _agent;
@@ -16,13 +16,11 @@ namespace SkyloftGame.Enemy
         private NavMeshAgent _agent;
         private EnemyData    _data;
         private Transform    _target;
-        private Coroutine    _pathLoop;
+        private CancellationTokenSource _aiCts;
 
-        // Oyuncu bu kare mesafesinden az hareket ettiyse path yeniden hesaplanmaz (~0.2 m²)
         private const float MinMoveSqr = 0.04f;
 
-        private Vector3        _lastDestination;
-        private WaitForSeconds _pathWait;
+        private Vector3 _lastDestination;
 
         public EnemyStateType CurrentState { get; private set; } = EnemyStateType.Chase;
 
@@ -38,24 +36,23 @@ namespace SkyloftGame.Enemy
             _agent.acceleration     = data.acceleration;
             _agent.stoppingDistance = data.stoppingDistance;
             _agent.autoBraking      = true;
-            _pathWait               = new WaitForSeconds(data.pathUpdateInterval);
         }
 
         public void StartAI()
         {
-            if (_pathLoop != null) return;
+            if (_aiCts != null) return;
             CurrentState = EnemyStateType.Chase;
 
-            // isStopped yalnızca ajan NavMesh üstündeyken çağrılabilir; aksi halde hata verir.
             if (_agent.isActiveAndEnabled && _agent.isOnNavMesh)
                 _agent.isStopped = false;
 
-            _pathLoop = StartCoroutine(PathUpdateLoop());
+            _aiCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            PathUpdateLoopAsync(_aiCts.Token).Forget();
         }
 
         public void StopAI()
         {
-            if (_pathLoop != null) { StopCoroutine(_pathLoop); _pathLoop = null; }
+            if (_aiCts != null) { _aiCts.Cancel(); _aiCts.Dispose(); _aiCts = null; }
 
             if (_agent.isActiveAndEnabled && _agent.isOnNavMesh)
             {
@@ -72,20 +69,19 @@ namespace SkyloftGame.Enemy
 
         private void Update()
         {
-            if (_pathLoop == null || _data == null) return;
+            if (_aiCts == null || _data == null) return;
 
-            // Saldırı hasarı artık Update'te değil, punch animasyonunun temas karesinden
-            // (Animation Event → DealAttackDamage) tetiklenir.
             if (CurrentState == EnemyStateType.Chase)
                 SetDestinationIfMoved();
         }
 
-        private IEnumerator PathUpdateLoop()
+        private async UniTaskVoid PathUpdateLoopAsync(CancellationToken token)
         {
             while (true)
             {
                 if (_target != null) EvaluateState();
-                yield return _pathWait;
+                await UniTask.Delay(TimeSpan.FromSeconds(_data.pathUpdateInterval),
+                                    cancellationToken: token);
             }
         }
 
@@ -125,16 +121,10 @@ namespace SkyloftGame.Enemy
             _lastDestination = pos;
         }
 
-        /// <summary>
-        /// Saldırı hasarını uygular. Punch animasyonundaki temas karesine eklenen
-        /// Animation Event tarafından (EnemyAttackAnimationRelay üzerinden) çağrılır.
-        /// Yalnızca Attack durumundayken ve hedef hâlâ menzildeyken hasar verir.
-        /// </summary>
         public void DealAttackDamage()
         {
             if (CurrentState != EnemyStateType.Attack || _target == null || _data == null) return;
 
-            // Animasyon sürerken hedef uzaklaşmış olabilir; küçük toleransla menzil kontrolü.
             float reach = _data.attackRange * 1.2f;
             if ((transform.position - _target.position).sqrMagnitude > reach * reach) return;
 

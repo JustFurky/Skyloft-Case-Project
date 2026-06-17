@@ -4,10 +4,6 @@ using TMPro;
 
 namespace SkyloftGame.UI
 {
-    /// <summary>
-    /// "Game Over" menüsü: oyuncu canı bittiğinde gösterilir.
-    /// Aynı seviyeyi tekrar oynama veya menüye dönme seçeneği sunar.
-    /// </summary>
     public class GameLostView : UIPanel
     {
         [SerializeField] private TMP_Text _runKillsLabel;

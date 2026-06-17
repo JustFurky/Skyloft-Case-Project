@@ -1,61 +1,48 @@
 using UnityEngine;
+using SkyloftGame.Pool;
 
 namespace SkyloftGame.Level
 {
-    /// <summary>
-    /// Tek bir seviyenin veriye dayalı tanımı (ScriptableObject).
-    ///
-    /// Zorluk artışı tamamen veriden yönetilir: daha fazla/uzun dalga, daha kısa
-    /// spawn aralığı veya daha güçlü düşman pool anahtarları girilerek yeni kod
-    /// yazmadan üç (veya N) seviye üretilebilir — OCP'ye uygun.
-    ///
-    /// Oluşturma: Assets/Create/SkyloftGame/Level Data
-    /// </summary>
     [CreateAssetMenu(menuName = "SkyloftGame/Level Data", fileName = "LevelData_New")]
     public class LevelData : ScriptableObject
     {
-        [Header("Kimlik")]
-        [Tooltip("0 tabanlı seviye sırası. LevelDatabase içindeki index ile eşleşmelidir.")]
+        [Header("Identity")]
+        [Tooltip("0-based level order. Must match the index in LevelDatabase.")]
         public int levelIndex;
         public string displayName = "Level 1";
 
-        [Header("Süre")]
-        [Tooltip("Hayatta kalma süresi (saniye). Süre dolduğunda oyun kazanılır.")]
-        [Min(5f)] public float durationSeconds = 180f;   // 3 dakika
+        [Header("Duration")]
+        [Tooltip("Survival time (seconds). The game is won when the time runs out.")]
+        [Min(5f)] public float durationSeconds = 180f;
 
-        [Header("Düşman Dalgaları")]
+        [Header("Enemy Waves")]
         public Wave[] waves;
 
-        [Header("Spawn Alanı")]
-        [Tooltip("Oyuncunun etrafında düşmanların belireceği halkanın dış yarıçapı.")]
+        [Header("Spawn Area")]
+        [Tooltip("Outer radius of the ring around the player where enemies appear.")]
         [Min(1f)] public float spawnRadius = 14f;
 
-        [Tooltip("Düşmanların oyuncuya doğrudan bitişik doğmasını engelleyen iç yarıçap.")]
+        [Tooltip("Inner radius that prevents enemies from spawning right next to the player.")]
         [Min(1f)] public float minSpawnDistance = 7f;
 
-        [Header("Optimizasyon")]
-        [Tooltip("Aynı anda sahnede tutulabilecek maksimum canlı düşman. " +
-                 "Limit dolduğunda spawn duraklatılır — büyük dalgalarda performansı korur.")]
+        [Header("Optimization")]
+        [Tooltip("Maximum number of live enemies allowed in the scene at once. " +
+                 "Spawning pauses when the limit is reached, preserving performance during large waves.")]
         [Min(1)] public int maxAliveEnemies = 60;
     }
 
-    /// <summary>
-    /// Bir seviye içindeki tek bir düşman dalgası.
-    /// Birden çok dalga, başlangıç gecikmeleriyle üst üste binerek
-    /// kademeli yoğunluk artışı oluşturur.
-    /// </summary>
     [System.Serializable]
     public class Wave
     {
-        [Tooltip("Bu dalgada kullanılacak düşman pool anahtarı (ObjectPooler key).")]
-        public string enemyPoolKey = "Enemy";
+        [Tooltip("Enemy pool used by this wave (PoolId asset).")]
+        public PoolId enemy;
 
         [Min(1)] public int count = 10;
 
-        [Tooltip("Aynı dalgadaki düşmanlar arası spawn aralığı (saniye).")]
-        [Min(0.02f)] public float spawnInterval = 0.3f;
+        [Tooltip("Spawn interval between enemies in the same wave (seconds). Smaller = faster flow.")]
+        [Min(0.02f)] public float spawnInterval = 0.1f;
 
-        [Tooltip("Bu dalga, seviye başlangıcından kaç saniye sonra tetiklensin.")]
+        [Tooltip("How many seconds after the level start this wave is triggered.")]
         [Min(0f)] public float startDelay = 0f;
     }
 }
