@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -350,6 +351,23 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26989c9284184138812b5bb806fec3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Core.CameraFollow
+  _target: {fileID: 0}
+  _offset: {x: 0, y: 14, z: -8}
+  _smoothTime: 0.15
+  _lookAtTarget: 1
+  _lookHeightOffset: 1.5
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,14 +394,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -428,7 +446,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -614,7 +632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc5257ba10da74fea8726fe7b77cf958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Level.LevelManager
-  _database: {fileID: 0}
+  _database: {fileID: 11400000, guid: a280d447fe8af4b5fad3c7ecda5b88d9, type: 2}
 --- !u!1 &1172826210
 GameObject:
   m_ObjectHideFlags: 0
@@ -1024,6 +1042,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &2051367003
 MeshFilter:
@@ -1168,44 +1187,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1856054330925226835, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2014550850053909907, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2819808793073507634, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
       propertyPath: m_Name
       value: GamePlay_Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4345069855970374939, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
-      propertyPath: m_AnchoredPosition.y
+    - target: {fileID: 4635755079530086241, guid: 1cc3566b6065a474ea273d48b1176626, type: 3}
+      propertyPath: _dynamic
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

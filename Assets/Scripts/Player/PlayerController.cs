@@ -8,8 +8,8 @@ namespace SkyloftGame.Player
     /// CharacterController tabanlı 3B oyuncu hareketi. Girdiyi IMoveInput
     /// kaynağından alır; yalnızca Playing durumunda kontrol açıktır.
     ///
-    /// Sorumluluğu sadece hareket + yönelimdir (SRP). Saldırı PlayerShooter'da,
-    /// can PlayerHealth'tedir.
+    /// Sorumluluğu hareket + yönelim + alan sınırıdır (SRP). Saldırı PlayerShooter,
+    /// can PlayerHealth, animasyon PlayerAnimator'dadır.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
@@ -22,16 +22,22 @@ namespace SkyloftGame.Player
         [SerializeField] private float _rotationSpeed  = 720f;   // derece/saniye
         [SerializeField] private float _gravity        = -20f;
 
-        [Header("Animasyon (opsiyonel)")]
-        [SerializeField] private Animator _animator;
-
-        private static readonly int SpeedHash = Animator.StringToHash("Speed");
+        [Header("Oyun Alanı Sınırı")]
+        [Tooltip("Açıkken oyuncu, merkez etrafında yarıçap içinde tutulur (alandan düşmez).")]
+        [SerializeField] private bool    _clampToArena = true;
+        [SerializeField] private Vector3 _arenaCenter  = Vector3.zero;
+        [Min(1f)] [SerializeField] private float _arenaRadius = 24f;
 
         private CharacterController _cc;
+        private PlayerTargeting     _targeting;
         private float _verticalVelocity;
         private bool  _controlEnabled;
 
-        private void Awake() => _cc = GetComponent<CharacterController>();
+        private void Awake()
+        {
+            _cc        = GetComponent<CharacterController>();
+            _targeting = GetComponent<PlayerTargeting>();
+        }
 
         private void OnEnable()
         {
@@ -58,8 +64,8 @@ namespace SkyloftGame.Player
 
             ApplyGravity();
             Move(move);
+            if (_clampToArena) ClampToArena();
             Rotate(move);
-            UpdateAnimator(move);
         }
 
         private void ApplyGravity()
@@ -75,21 +81,51 @@ namespace SkyloftGame.Player
             _cc.Move(velocity * Time.deltaTime);
         }
 
-        private void Rotate(Vector3 planarDir)
+        private void Rotate(Vector3 moveDir)
         {
-            if (planarDir.sqrMagnitude < 0.0001f) return;
-            Quaternion target = Quaternion.LookRotation(planarDir, Vector3.up);
+            // Hedef varken: hareket etse bile hedefe dönük kal (nişanı bırakma).
+            // Hedef yokken: hareket yönüne dön.
+            Vector3 faceDir = AimDirection(moveDir);
+            if (faceDir.sqrMagnitude < 0.0001f) return;
+
+            Quaternion target = Quaternion.LookRotation(faceDir, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation, target, _rotationSpeed * Time.deltaTime);
         }
 
-        private void UpdateAnimator(Vector3 planarDir)
+        private Vector3 AimDirection(Vector3 moveDir)
         {
-            if (_animator != null)
-                _animator.SetFloat(SpeedHash, planarDir.magnitude);
+            if (_targeting != null && _targeting.CurrentTarget != null)
+            {
+                Vector3 toTarget = _targeting.CurrentTarget.position - transform.position;
+                toTarget.y = 0f;
+                if (toTarget.sqrMagnitude > 0.0001f) return toTarget.normalized;
+            }
+            return moveDir;
+        }
+
+        /// <summary>Oyuncuyu alan merkezinin yarıçapı içinde tutar (kenardan düşmeyi engeller).</summary>
+        private void ClampToArena()
+        {
+            Vector3 pos  = transform.position;
+            Vector3 flat = new(pos.x - _arenaCenter.x, 0f, pos.z - _arenaCenter.z);
+
+            if (flat.sqrMagnitude <= _arenaRadius * _arenaRadius) return;
+
+            Vector3 clamped = _arenaCenter + flat.normalized * _arenaRadius;
+            transform.position = new Vector3(clamped.x, pos.y, clamped.z);
         }
 
         private void HandleStateChanged(GameStateType previous, GameStateType next)
             => _controlEnabled = next == GameStateType.Playing;
+
+#if UNITY_EDITOR
+        private void OnDrawGizmosSelected()
+        {
+            if (!_clampToArena) return;
+            UnityEditor.Handles.color = new Color(0.2f, 0.6f, 1f, 0.8f);
+            UnityEditor.Handles.DrawWireDisc(_arenaCenter, Vector3.up, _arenaRadius);
+        }
+#endif
     }
 }

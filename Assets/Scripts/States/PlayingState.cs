@@ -26,7 +26,15 @@ namespace SkyloftGame.States
             _manager.Timer?.Begin(level.durationSeconds);
         }
 
-        public void Update() => _manager.Timer?.Tick(Time.deltaTime);
+        public void Update()
+        {
+            _manager.Timer?.Tick(Time.deltaTime);
+
+            // Erken zafer: süre dolmadan tüm dalgalar temizlendiyse de seviye tamamlanır.
+            // (Timer.OnElapsed zaten süre bitince WinGame'i tetikler.)
+            if (_manager.Spawner != null && _manager.Spawner.IsCleared)
+                _manager.WinGame();
+        }
 
         public void FixedUpdate() { }
 

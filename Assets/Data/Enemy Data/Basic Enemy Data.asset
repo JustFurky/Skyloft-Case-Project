@@ -16,7 +16,7 @@ MonoBehaviour:
   maxHp: 50
   armor: 0
   moveSpeed: 3.5
-  angularSpeed: 120
+  angularSpeed: 360
   acceleration: 8
   stoppingDistance: 1.2
   pathUpdateInterval: 0.2

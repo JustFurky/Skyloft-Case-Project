@@ -26,8 +26,15 @@ namespace SkyloftGame.Gameplay
         private readonly List<Coroutine> _waveRoutines = new();
         private LevelData _level;
         private Transform _target;
+        private int _totalWaves;
+        private int _completedWaves;
 
         public int AliveCount => EnemyRegistry.AliveCount;
+
+        // Tüm dalgalar üretilmiş ve canlı düşman kalmamışsa seviye temizlenmiştir.
+        // _totalWaves > 0 koşulu, spawn başlamadan (canlı 0 iken) yanlış zaferi önler.
+        public bool IsCleared =>
+            _totalWaves > 0 && _completedWaves >= _totalWaves && AliveCount == 0;
 
         public void BeginLevel(LevelData level, Transform target)
         {
@@ -39,8 +46,10 @@ namespace SkyloftGame.Gameplay
                 return;
             }
 
-            _level  = level;
-            _target = target;
+            _level          = level;
+            _target         = target;
+            _totalWaves     = level.waves?.Length ?? 0;
+            _completedWaves = 0;
 
             if (level.waves == null) return;
             foreach (var wave in level.waves)
@@ -52,6 +61,10 @@ namespace SkyloftGame.Gameplay
             foreach (var routine in _waveRoutines)
                 if (routine != null) StopCoroutine(routine);
             _waveRoutines.Clear();
+
+            // Sayaçları sıfırla ki durdurulduğunda IsCleared yanlışlıkla true olmasın.
+            _totalWaves     = 0;
+            _completedWaves = 0;
 
             // Canlı düşmanları pool'a iade et (snapshot — iade Unregister tetikler).
             foreach (var enemy in EnemyRegistry.Snapshot())
@@ -74,13 +87,22 @@ namespace SkyloftGame.Gameplay
                 SpawnOne(wave.enemyPoolKey);
                 yield return interval;
             }
+
+            _completedWaves++;   // bu dalganın tüm düşmanları üretildi
         }
 
         private void SpawnOne(string poolKey)
         {
             if (!TryGetSpawnPosition(out Vector3 position)) return;
 
-            var enemy = ObjectPooler.Instance.Get<EnemyUnit>(poolKey, position, Quaternion.identity);
+            // Doğar doğmaz oyuncuya dönük gelsin (NavMesh'in yavaş dönüşünü beklemeden).
+            Vector3 toTarget = _target.position - position;
+            toTarget.y = 0f;
+            Quaternion rotation = toTarget.sqrMagnitude > 0.001f
+                ? Quaternion.LookRotation(toTarget)
+                : Quaternion.identity;
+
+            var enemy = ObjectPooler.Instance.Get<EnemyUnit>(poolKey, position, rotation);
             enemy?.SetTarget(_target);   // hedefi enjekte et (FindWithTag yerine)
         }
 

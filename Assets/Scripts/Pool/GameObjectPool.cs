@@ -18,9 +18,12 @@ namespace SkyloftGame.Pool
             _config = config;
             _root   = root;
 
+            // actionOnGet bilerek atanmadı: nesne, KONUMLANDIRILDIKTAN sonra aktive
+            // edilip OnSpawn alacak (bkz. Spawn). Bu sıra, NavMeshAgent gibi
+            // bileşenlerin doğru pozisyonda NavMesh'e yerleşmesi için kritiktir.
             _pool = new ObjectPool<GameObject>(
                 createFunc:      OnCreate,
-                actionOnGet:     OnGet,
+                actionOnGet:     null,
                 actionOnRelease: OnRelease,
                 actionOnDestroy: obj => Object.Destroy(obj),
                 collectionCheck: config.collectionChecks,
@@ -31,9 +34,25 @@ namespace SkyloftGame.Pool
             Prewarm(config.initialSize);
         }
 
-        public GameObject Get()               => _pool.Get();
-        public void       Release(GameObject obj) => _pool.Release(obj);
-        public void       Clear()             => _pool.Clear();
+        /// <summary>
+        /// Havuzdan nesne alır, önce konumlandırır, SONRA aktive edip OnSpawn çağırır.
+        /// Önce-konumlandır-sonra-aktive et sırası NavMeshAgent yerleşimi için şarttır.
+        /// </summary>
+        public GameObject Spawn(Vector3 position, Quaternion rotation)
+        {
+            var obj = _pool.Get();                                   // pasif gelir (kök inaktif)
+            obj.transform.SetParent(null);                          // aktif hiyerarşiye çıkar
+            obj.transform.SetPositionAndRotation(position, rotation); // önce yerleştir
+            obj.SetActive(true);                                     // sonra aktive et
+
+            foreach (var p in obj.GetComponentsInChildren<IPoolable>(true))
+                p.OnSpawn();
+
+            return obj;
+        }
+
+        public void Release(GameObject obj) => _pool.Release(obj);
+        public void Clear()                 => _pool.Clear();
 
         private GameObject OnCreate()
         {
@@ -45,17 +64,14 @@ namespace SkyloftGame.Pool
             return obj;
         }
 
-        private static void OnGet(GameObject obj)
-        {
-            obj.SetActive(true);
-            foreach (var p in obj.GetComponentsInChildren<IPoolable>(true))
-                p.OnSpawn();
-        }
-
         private void OnRelease(GameObject obj)
         {
-            foreach (var p in obj.GetComponentsInChildren<IPoolable>(false))
-                p.OnDespawn();
+            // Yalnızca gerçekten spawn olmuş (aktif) nesnelerde OnDespawn çağır;
+            // prewarm sırasında nesne hiç aktive edilmediğinden atlanır.
+            if (obj.activeSelf)
+                foreach (var p in obj.GetComponentsInChildren<IPoolable>(true))
+                    p.OnDespawn();
+
             obj.SetActive(false);
             obj.transform.SetParent(_root);
         }
@@ -63,6 +79,7 @@ namespace SkyloftGame.Pool
         private void Prewarm(int count)
         {
             if (count <= 0) return;
+            // Nesneler pasif kalır; OnSpawn tetiklenmez (NavMeshAgent erken Resume hatası önlenir).
             var buffer = new GameObject[count];
             for (int i = 0; i < count; i++) buffer[i] = _pool.Get();
             for (int i = 0; i < count; i++) _pool.Release(buffer[i]);

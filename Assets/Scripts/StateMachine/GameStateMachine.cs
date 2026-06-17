@@ -18,7 +18,13 @@ namespace SkyloftGame.StateMachine
 
         public void TransitionTo(GameStateType next)
         {
-            if (next == CurrentStateType) return;
+            Debug.Log($"[SM] TransitionTo({next}) istendi. Mevcut={CurrentStateType}");   // TEŞHİS
+
+            if (next == CurrentStateType)
+            {
+                Debug.LogWarning($"[SM] Zaten {next} durumundayız; geçiş yok sayıldı.");   // TEŞHİS
+                return;
+            }
 
             if (!_states.TryGetValue(next, out var nextState))
             {
@@ -34,6 +40,7 @@ namespace SkyloftGame.StateMachine
 
             CurrentState.Enter();
             OnStateChanged?.Invoke(PreviousStateType, next);
+            Debug.Log($"[SM] Geçiş tamam: {PreviousStateType} -> {next}");                 // TEŞHİS
         }
 
         public void Update()      => CurrentState?.Update();

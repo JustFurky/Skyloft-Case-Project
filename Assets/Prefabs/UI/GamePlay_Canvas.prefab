@@ -62,7 +62,8 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_UseReflectionProbes: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -131,9 +132,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 773701894932680757}
     m_Modifications:
+    - target: {fileID: 1604424580325271704, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1604424580325271704, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1604424580325271704, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1604424580325271704, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2043832716144014754, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
       propertyPath: m_Name
       value: Panel_Hud
+      objectReference: {fileID: 0}
+    - target: {fileID: 2043832716144014754, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602276035200217104, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602276035200217104, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602276035200217104, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602276035200217104, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5430471135356440341, guid: f2c4f7d4d98d84b4db58ec07b71b6575, type: 3}
       propertyPath: m_Pivot.x
@@ -247,6 +284,10 @@ PrefabInstance:
     - target: {fileID: 269657192031730979, guid: f968ce7f20eca4b3b93d84b91c7b4522, type: 3}
       propertyPath: m_Name
       value: Panel_GameWon
+      objectReference: {fileID: 0}
+    - target: {fileID: 269657192031730979, guid: f968ce7f20eca4b3b93d84b91c7b4522, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 288670277629129727, guid: f968ce7f20eca4b3b93d84b91c7b4522, type: 3}
       propertyPath: m_Pivot.x
@@ -467,6 +508,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Panel_GameLost
       objectReference: {fileID: 0}
+    - target: {fileID: 748591071032032676, guid: c375ea06161214fd6bcb1769aba93a76, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6004416954098202133, guid: c375ea06161214fd6bcb1769aba93a76, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -579,6 +624,10 @@ PrefabInstance:
     - target: {fileID: 1690312462895360707, guid: 503335e88ff4d424d8f91f5b3fda3f46, type: 3}
       propertyPath: m_Name
       value: Panel_Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 1690312462895360707, guid: 503335e88ff4d424d8f91f5b3fda3f46, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2381455522418302676, guid: 503335e88ff4d424d8f91f5b3fda3f46, type: 3}
       propertyPath: m_Pivot.x

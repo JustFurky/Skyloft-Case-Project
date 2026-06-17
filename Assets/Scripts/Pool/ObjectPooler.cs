@@ -22,10 +22,17 @@ namespace SkyloftGame.Pool
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+
+            // DontDestroyOnLoad yalnızca root objelerde çalışır; child ise root'a çıkar.
+            if (transform.parent != null) transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
 
             _poolRoot = new GameObject("[PoolRoot]").transform;
             _poolRoot.SetParent(transform);
+            // Pool kökü pasif: havuzlanan (ön-ısıtılan/iade edilen) nesneler hiyerarşide
+            // inaktif kalır; böylece NavMeshAgent gibi bileşenler spawn edilene kadar
+            // oluşmaz (NavMesh yokken "Failed to create agent" uyarısını da önler).
+            _poolRoot.gameObject.SetActive(false);
 
             foreach (var cfg in _configs)
                 RegisterPool(cfg);
@@ -58,9 +65,8 @@ namespace SkyloftGame.Pool
         public GameObject Get(string key, Vector3 position, Quaternion rotation)
         {
             if (!TryGetPool(key, out var pool)) return null;
-            var obj = pool.Get();
-            obj.transform.SetPositionAndRotation(position, rotation);
-            return obj;
+            // Konumlandırma + aktive + OnSpawn havuz içinde, doğru sırada yapılır.
+            return pool.Spawn(position, rotation);
         }
 
         public GameObject Get(string key, Vector3 position) => Get(key, position, Quaternion.identity);

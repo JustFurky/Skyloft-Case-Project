@@ -17,9 +17,8 @@ namespace SkyloftGame.UI
         protected override void Awake()
         {
             base.Awake();
-            var gsm = GameStateManager.Instance;
-            if (_retryButton != null) _retryButton.onClick.AddListener(() => gsm.ReplayLevel());
-            if (_menuButton != null)  _menuButton.onClick.AddListener(() => gsm.GoToMenu());
+            if (_retryButton != null) _retryButton.onClick.AddListener(() => GameStateManager.Instance.ReplayLevel());
+            if (_menuButton != null)  _menuButton.onClick.AddListener(() => GameStateManager.Instance.GoToMenu());
         }
 
         protected override void OnBeforeShow()

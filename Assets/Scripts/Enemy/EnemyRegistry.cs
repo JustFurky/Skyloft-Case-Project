@@ -34,26 +34,5 @@ namespace SkyloftGame.Enemy
         public static List<Enemy> Snapshot() => new(Alive);
 
         public static void Clear() => Alive.Clear();
-
-        /// <summary>Verilen konuma en yakın canlı düşmanı, isteğe bağlı menzil içinde bulur.</summary>
-        public static Enemy FindNearest(Vector3 position, float maxRange = Mathf.Infinity)
-        {
-            Enemy nearest = null;
-            float bestSqr = maxRange * maxRange;
-
-            foreach (var enemy in Alive)
-            {
-                if (enemy == null || enemy.IsDead) continue;
-
-                float sqr = (enemy.transform.position - position).sqrMagnitude;
-                if (sqr <= bestSqr)
-                {
-                    bestSqr = sqr;
-                    nearest = enemy;
-                }
-            }
-
-            return nearest;
-        }
     }
 }

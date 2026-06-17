@@ -30,6 +30,7 @@ namespace SkyloftGame.UI
 
         private void HandleStateChanged(GameStateType previous, GameStateType next)
         {
+            Debug.Log($"[UI] HandleStateChanged {previous}->{next} | menuPanel atanmış mı: {_menuPanel != null}");   // TEŞHİS
             Toggle(_menuPanel,     next == GameStateType.Menu);
             Toggle(_hudPanel,      next == GameStateType.Playing);
             Toggle(_gameWonPanel,  next == GameStateType.GameWon);

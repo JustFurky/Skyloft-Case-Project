@@ -3,57 +3,56 @@ using UnityEngine;
 namespace SkyloftGame.Enemy
 {
     /// <summary>
-    /// Düşman AI durumunu Animator parametrelerine bağlayan köprü (SRP).
-    /// AI mantığı ile görsel mantık ayrıdır; bu bileşen yalnızca animasyon parametresi yazar.
+    /// Düşman animasyonlarını AI durumuna göre CrossFade ile sürer
+    /// (Animator parametresi/transition gerektirmez). AI mantığından ayrıdır (SRP).
     ///
-    /// Beklenen Animator parametreleri:
-    ///   - float "Speed"  : ajanın hız büyüklüğü (Idle/Run blend)
-    ///   - trigger "Attack": saldırı durumuna geçiş
-    ///   - trigger "Die"   : ölüm
+    ///   Chase  → Zombie Running
+    ///   Attack → Zombie Punching
+    ///
+    /// Havuzdan her çıkışta (OnEnable) mevcut duruma göre yeniden senkronize olur.
     /// </summary>
-    [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(EnemyAI))]
-    [RequireComponent(typeof(Enemy))]
     public class EnemyAnimator : MonoBehaviour
     {
-        private static readonly int SpeedHash  = Animator.StringToHash("Speed");
-        private static readonly int AttackHash = Animator.StringToHash("Attack");
-        private static readonly int DieHash    = Animator.StringToHash("Die");
+        [Tooltip("Boşsa child'lardan bulunur (model genelde child objededir).")]
+        [SerializeField] private Animator _animator;
 
-        private Animator _animator;
-        private EnemyAI  _ai;
-        private Enemy    _enemy;
+        [Header("Animator State Adları")]
+        [SerializeField] private string _runState    = "Zombie Running";
+        [SerializeField] private string _attackState = "Zombie Punching";
+
+        [SerializeField] private float _crossFade = 0.1f;
+
+        private EnemyAI _ai;
+        private int _runHash, _attackHash, _currentHash;
 
         private void Awake()
         {
-            _animator = GetComponent<Animator>();
-            _ai       = GetComponent<EnemyAI>();
-            _enemy    = GetComponent<Enemy>();
+            if (_animator == null) _animator = GetComponentInChildren<Animator>();
+            _ai = GetComponent<EnemyAI>();
+
+            _runHash    = Animator.StringToHash(_runState);
+            _attackHash = Animator.StringToHash(_attackState);
         }
 
         private void OnEnable()
         {
-            _ai.OnStateChanged += HandleStateChanged;
-            _enemy.OnDied      += HandleDied;
+            _currentHash = 0;                       // pool'dan çıkışta yeniden değerlendir
+            _ai.OnStateChanged += Apply;
+            Apply(_ai.CurrentState);
         }
 
-        private void OnDisable()
+        private void OnDisable() => _ai.OnStateChanged -= Apply;
+
+        private void Apply(EnemyStateType state)
         {
-            _ai.OnStateChanged -= HandleStateChanged;
-            _enemy.OnDied      -= HandleDied;
-        }
+            if (_animator == null) return;
 
-        private void Update()
-        {
-            if (_ai.Agent != null)
-                _animator.SetFloat(SpeedHash, _ai.Agent.velocity.magnitude);
-        }
+            int desired = state == EnemyStateType.Attack ? _attackHash : _runHash;
+            if (desired == _currentHash || !_animator.HasState(0, desired)) return;
 
-        private void HandleStateChanged(EnemyStateType state)
-        {
-            if (state == EnemyStateType.Attack) _animator.SetTrigger(AttackHash);
+            _animator.CrossFadeInFixedTime(desired, _crossFade);
+            _currentHash = desired;
         }
-
-        private void HandleDied(Enemy _) => _animator.SetTrigger(DieHash);
     }
 }

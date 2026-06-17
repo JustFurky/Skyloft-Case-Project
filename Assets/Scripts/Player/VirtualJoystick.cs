@@ -27,8 +27,9 @@ namespace SkyloftGame.Player
         [Tooltip("Bu eşik altındaki girdiler yok sayılır (ölü bölge).")]
         [Range(0f, 0.5f)] [SerializeField] private float _deadZone = 0.1f;
 
-        [Tooltip("Dokunulan yerde mi belirsin (dinamik), yoksa sabit mi dursun.")]
-        [SerializeField] private bool _dynamic = true;
+        [Tooltip("Açıkken joystick dokunulan yerde belirir (ve serbestken gizlenir). " +
+                 "Kapalıyken sabit ve hep görünür kalır.")]
+        [SerializeField] private bool _dynamic = false;
 
         private Vector2 _direction = Vector2.zero;
         private Canvas  _canvas;

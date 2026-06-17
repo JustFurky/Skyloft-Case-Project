@@ -85,6 +85,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8b8b74ed705c345d5a6f10fcbba47d68, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3308257441087445078}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8b8b74ed705c345d5a6f10fcbba47d68, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7650243681187908227}
   m_SourcePrefab: {fileID: 100100000, guid: 8b8b74ed705c345d5a6f10fcbba47d68, type: 3}
 --- !u!1 &3552440254141636085 stripped
 GameObject:
@@ -186,6 +189,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 326845b7c943e4754870532cc07e4f3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Enemy.EnemyAnimator
+  _animator: {fileID: 0}
+  _runState: Zombie Running
+  _attackState: Zombie Punching
+  _crossFade: 0.1
 --- !u!136 &3308257441087445078
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -209,6 +216,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &7650243681187908227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3552440254141636085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71dcd6f845172443e9e3782a28ec08ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Enemy.EnemyAttackAnimationRelay
+  _ai: {fileID: 3022907368594482398}
 --- !u!137 &7283851054158466794 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -2839295581537669554, guid: 8b8b74ed705c345d5a6f10fcbba47d68, type: 3}

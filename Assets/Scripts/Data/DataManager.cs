@@ -26,6 +26,9 @@ namespace SkyloftGame.Data
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+
+            // DontDestroyOnLoad yalnızca root objelerde çalışır; child ise root'a çıkar.
+            if (transform.parent != null) transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
 
             _service ??= new EncryptedJsonDataService();

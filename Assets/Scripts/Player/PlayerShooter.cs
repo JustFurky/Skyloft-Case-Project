@@ -1,16 +1,17 @@
 using UnityEngine;
 using SkyloftGame.Combat;
-using SkyloftGame.Enemy;
 using SkyloftGame.Pool;
 using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.Player
 {
     /// <summary>
-    /// En yakın düşmana otomatik nişan alıp ateş eden silah denetleyicisi.
-    /// Mermiler ObjectPooler'dan alınır (Instantiate/Destroy yok) — büyük çatışmalarda
-    /// GC ve oluşturma maliyetini ortadan kaldırır.
+    /// PlayerTargeting'in kilitlediği hedefe otomatik ateş eden silah denetleyicisi.
+    /// Hedef algılama PlayerTargeting'e aittir (tek kaynak); burada yalnızca ateş
+    /// mantığı vardır (SRP). Mermiler ObjectPooler'dan alınır (Instantiate/Destroy yok).
+    /// Nişan (gövdenin hedefe dönmesi) PlayerController tarafından sürdürülür.
     /// </summary>
+    [RequireComponent(typeof(PlayerTargeting))]
     public class PlayerShooter : MonoBehaviour
     {
         [Header("Pool")]
@@ -18,17 +19,16 @@ namespace SkyloftGame.Player
 
         [Header("Ateş")]
         [SerializeField] private Transform _muzzle;
-        [SerializeField] private float _fireRate    = 4f;    // saniyede mermi
-        [SerializeField] private float _range        = 12f;
+        [SerializeField] private float _fireRate        = 4f;    // saniyede mermi
         [SerializeField] private float _projectileSpeed = 18f;
 
-        [Header("Animasyon / VFX (opsiyonel)")]
+        [Header("VFX (opsiyonel)")]
         [SerializeField] private ParticleSystem _muzzleFlash;
-        [SerializeField] private Animator _animator;
 
-        private static readonly int FireHash = Animator.StringToHash("Fire");
-
+        private PlayerTargeting _targeting;
         private float _cooldown;
+
+        private void Awake() => _targeting = GetComponent<PlayerTargeting>();
 
         private void Update()
         {
@@ -39,30 +39,26 @@ namespace SkyloftGame.Player
             _cooldown -= Time.deltaTime;
             if (_cooldown > 0f) return;
 
-            var target = EnemyRegistry.FindNearest(transform.position, _range);
+            var target = _targeting.CurrentTarget;
             if (target == null) return;
 
-            FireAt(target.transform.position);
+            FireAt(target.position);
             _cooldown = 1f / Mathf.Max(0.01f, _fireRate);
         }
 
         private void FireAt(Vector3 targetPosition)
         {
             Vector3 origin    = _muzzle != null ? _muzzle.position : transform.position;
-            Vector3 direction = (targetPosition - origin);
+            Vector3 direction = targetPosition - origin;
             direction.y = 0f;
             direction.Normalize();
-
-            // Gövdeyi hedefe çevir (nişan hissi).
-            if (direction.sqrMagnitude > 0.001f)
-                transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
+            if (direction.sqrMagnitude < 0.001f) return;
 
             var projectile = ObjectPooler.Instance.Get<Projectile>(
                 _projectilePoolKey, origin, Quaternion.LookRotation(direction, Vector3.up));
             projectile?.Launch(direction, _projectileSpeed);
 
             if (_muzzleFlash != null) _muzzleFlash.Play();
-            if (_animator != null)    _animator.SetTrigger(FireHash);
         }
     }
 }

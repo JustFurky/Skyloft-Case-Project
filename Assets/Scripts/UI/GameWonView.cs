@@ -21,10 +21,19 @@ namespace SkyloftGame.UI
         protected override void Awake()
         {
             base.Awake();
-            var gsm = GameStateManager.Instance;
-            if (_nextLevelButton != null) _nextLevelButton.onClick.AddListener(() => gsm.GoToNextLevel());
-            if (_replayButton != null)    _replayButton.onClick.AddListener(() => gsm.ReplayLevel());
-            if (_menuButton != null)      _menuButton.onClick.AddListener(() => gsm.GoToMenu());
+            // TEŞHİS: hangi buton hangi objeye atanmış?
+            Debug.Log($"[GameWonView] Awake | menu={(_menuButton ? _menuButton.name : "NULL")}, " +
+                      $"replay={(_replayButton ? _replayButton.name : "NULL")}, " +
+                      $"next={(_nextLevelButton ? _nextLevelButton.name : "NULL")}");
+
+            // Tıklama anında Instance üzerinden çağır (yakalanan stale/null referans olmasın).
+            if (_nextLevelButton != null) _nextLevelButton.onClick.AddListener(() => GameStateManager.Instance.GoToNextLevel());
+            if (_replayButton != null)    _replayButton.onClick.AddListener(() => GameStateManager.Instance.ReplayLevel());
+            if (_menuButton != null)      _menuButton.onClick.AddListener(() =>
+            {
+                Debug.Log("[UI] GameWon Menu butonuna tıklandı");   // TEŞHİS
+                GameStateManager.Instance.GoToMenu();
+            });
         }
 
         protected override void OnBeforeShow()

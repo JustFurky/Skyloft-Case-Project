@@ -22,7 +22,6 @@ namespace SkyloftGame.Enemy
         private const float MinMoveSqr = 0.04f;
 
         private Vector3        _lastDestination;
-        private float          _attackTimer;
         private WaitForSeconds _pathWait;
 
         public EnemyStateType CurrentState { get; private set; } = EnemyStateType.Chase;
@@ -39,16 +38,19 @@ namespace SkyloftGame.Enemy
             _agent.acceleration     = data.acceleration;
             _agent.stoppingDistance = data.stoppingDistance;
             _agent.autoBraking      = true;
-            _attackTimer            = 0f;
             _pathWait               = new WaitForSeconds(data.pathUpdateInterval);
         }
 
         public void StartAI()
         {
             if (_pathLoop != null) return;
-            CurrentState     = EnemyStateType.Chase;
-            _agent.isStopped = false;
-            _pathLoop        = StartCoroutine(PathUpdateLoop());
+            CurrentState = EnemyStateType.Chase;
+
+            // isStopped yalnızca ajan NavMesh üstündeyken çağrılabilir; aksi halde hata verir.
+            if (_agent.isActiveAndEnabled && _agent.isOnNavMesh)
+                _agent.isStopped = false;
+
+            _pathLoop = StartCoroutine(PathUpdateLoop());
         }
 
         public void StopAI()
@@ -72,14 +74,10 @@ namespace SkyloftGame.Enemy
         {
             if (_pathLoop == null || _data == null) return;
 
+            // Saldırı hasarı artık Update'te değil, punch animasyonunun temas karesinden
+            // (Animation Event → DealAttackDamage) tetiklenir.
             if (CurrentState == EnemyStateType.Chase)
                 SetDestinationIfMoved();
-
-            if (CurrentState == EnemyStateType.Attack)
-            {
-                _attackTimer -= Time.deltaTime;
-                if (_attackTimer <= 0f) { PerformAttack(); _attackTimer = _data.attackCooldown; }
-            }
         }
 
         private IEnumerator PathUpdateLoop()
@@ -114,7 +112,6 @@ namespace SkyloftGame.Enemy
             {
                 _agent.isStopped = true;
                 _agent.ResetPath();
-                _attackTimer = 0f;
             }
         }
 
@@ -128,9 +125,20 @@ namespace SkyloftGame.Enemy
             _lastDestination = pos;
         }
 
-        private void PerformAttack()
+        /// <summary>
+        /// Saldırı hasarını uygular. Punch animasyonundaki temas karesine eklenen
+        /// Animation Event tarafından (EnemyAttackAnimationRelay üzerinden) çağrılır.
+        /// Yalnızca Attack durumundayken ve hedef hâlâ menzildeyken hasar verir.
+        /// </summary>
+        public void DealAttackDamage()
         {
-            if (_target != null && _target.TryGetComponent<IDamageable>(out var dmg))
+            if (CurrentState != EnemyStateType.Attack || _target == null || _data == null) return;
+
+            // Animasyon sürerken hedef uzaklaşmış olabilir; küçük toleransla menzil kontrolü.
+            float reach = _data.attackRange * 1.2f;
+            if ((transform.position - _target.position).sqrMagnitude > reach * reach) return;
+
+            if (_target.TryGetComponent<IDamageable>(out var dmg))
                 dmg.TakeDamage(_data.attackDamage);
         }
 

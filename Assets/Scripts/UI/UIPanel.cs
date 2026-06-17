@@ -16,20 +16,26 @@ namespace SkyloftGame.UI
 
         protected CanvasGroup CanvasGroup { get; private set; }
         private Sequence _animation;
+        private bool _shown;
 
         protected virtual void Awake()
         {
             CanvasGroup = GetComponent<CanvasGroup>();
-            ApplyVisible(false);
+
+            // Başlangıçta gizle — AMA Show() çağrısının tetiklediği SetActive(true)
+            // içinde Awake çalışırsa (panel sahnede pasif başladıysa) paneli yeniden
+            // kapatma; bu yüzden _shown bayrağına bakılır.
+            if (!_shown) ApplyHidden();
         }
 
         public void Show()
         {
-            gameObject.SetActive(true);
+            _shown = true;
+            gameObject.SetActive(true);   // pasif başlamış panelde Awake'i tetikler; o da _shown'a bakıp gizlemez
             SetInteractable(true);
             OnBeforeShow();
 
-            _animation.Stop();   // varsa önceki animasyonu kes (dead sequence'te güvenli no-op)
+            _animation.Stop();            // varsa önceki animasyonu kes (dead sequence'te güvenli no-op)
             CanvasGroup.alpha = 0f;
 
             _animation = Sequence.Create()
@@ -42,6 +48,7 @@ namespace SkyloftGame.UI
 
         public void Hide()
         {
+            _shown = false;
             if (!gameObject.activeInHierarchy) return;
             SetInteractable(false);
 
@@ -60,11 +67,11 @@ namespace SkyloftGame.UI
             CanvasGroup.blocksRaycasts = value;
         }
 
-        private void ApplyVisible(bool visible)
+        private void ApplyHidden()
         {
-            CanvasGroup.alpha = visible ? 1f : 0f;
-            SetInteractable(visible);
-            gameObject.SetActive(visible);
+            CanvasGroup.alpha = 0f;
+            SetInteractable(false);
+            gameObject.SetActive(false);
         }
     }
 }

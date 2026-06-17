@@ -21,12 +21,22 @@ namespace SkyloftGame.Pool
         // ObjectPooler tarafından, havuzdan ilk çıkarılma anında set edilir.
         public string PoolKey { get; internal set; }
 
+        // Aynı karede iki tetikleme (ör. mermi iki düşmana değme) ya da isabet +
+        // lifetime'ın çakışmasında çift iadeyi engeller. Spawn'da (OnEnable) sıfırlanır.
+        private bool _released;
+
+        private void OnEnable() => _released = false;
+
         /// <summary>
-        /// Nesneyi kendi pool'una güvenli şekilde iade eder.
+        /// Nesneyi kendi pool'una güvenli şekilde iade eder (idempotent — çift iade güvenli).
         /// ObjectPooler bulunamazsa (örn. sahne geçişi) nesneyi yok eder.
         /// </summary>
         public void Release()
         {
+            if (_released) return;
+            _released = true;
+            CancelInvoke(nameof(Release));
+
             if (ObjectPooler.Instance != null)
                 ObjectPooler.Instance.Release(PoolKey, gameObject);
             else

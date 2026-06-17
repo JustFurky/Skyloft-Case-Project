@@ -10,6 +10,10 @@ namespace SkyloftGame.Gameplay
     {
         int AliveCount { get; }
 
+        /// <summary>Tüm dalgalar üretildi VE sahnede canlı düşman kalmadı mı?
+        /// (Süre dolmadan erken zafer koşulu.)</summary>
+        bool IsCleared { get; }
+
         /// <summary>Verilen seviyenin tüm dalgalarını hedef etrafında üretmeye başlar.</summary>
         void BeginLevel(LevelData level, Transform target);
 
