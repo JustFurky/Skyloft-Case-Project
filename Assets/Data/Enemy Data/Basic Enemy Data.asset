@@ -23,5 +23,17 @@ MonoBehaviour:
   attackDamage: 10
   attackRange: 1.5
   attackCooldown: 1
+  spawnVfx:
+    pool: {fileID: 11400000, guid: e8a9551aa04b3420a95115f7984b00b4, type: 2}
+    forwardOffset: 0
+    upOffset: 0.5
+    faceOrigin: 0
+  deathVfx:
+    pool: {fileID: 11400000, guid: 79f22081d9c924e4089089d4ac5c4c4c, type: 2}
+    forwardOffset: 0
+    upOffset: 0.5
+    faceOrigin: 0
+  hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashDuration: 0.25
   scoreValue: 10
   dropChance: 0.2

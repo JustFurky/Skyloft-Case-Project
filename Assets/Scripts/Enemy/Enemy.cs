@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using PrimeTween;
 using UnityEngine;
 using SkyloftGame.Pool;
 using SkyloftGame.Core;
@@ -16,11 +16,6 @@ namespace SkyloftGame.Enemy
         [Header("Visual Feedback")]
         [SerializeField] private Renderer _bodyRenderer;
 
-        [Tooltip("Particle effect pool played on spawn (optional).")]
-        [SerializeField] private PoolId _spawnVfx;
-
-        [Tooltip("Particle effect pool played on death (optional).")]
-        [SerializeField] private PoolId _deathVfx;
 
         public event Action<float, float> OnDamaged;
         public event Action<Enemy>        OnDied;
@@ -33,14 +28,28 @@ namespace SkyloftGame.Enemy
         private PooledObject _pooledObject;
         private MaterialPropertyBlock _mpb;
 
-        private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
-        private static readonly WaitForSeconds HitFlashDuration = new(0.08f);
+        private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorPropertyId     = Shader.PropertyToID("_Color");
+
+        private Color _baseColor = Color.white;
+        private Tween _hitFlashTween;
 
         private void Awake()
         {
             _ai           = GetComponent<EnemyAI>();
             _pooledObject = GetComponent<PooledObject>();
             _mpb          = new MaterialPropertyBlock();
+            _baseColor    = ReadMaterialBaseColor();
+        }
+
+        private Color ReadMaterialBaseColor()
+        {
+            if (_bodyRenderer == null) return Color.white;
+            var mat = _bodyRenderer.sharedMaterial;
+            if (mat == null) return Color.white;
+            if (mat.HasProperty(BaseColorPropertyId)) return mat.GetColor(BaseColorPropertyId);
+            if (mat.HasProperty(ColorPropertyId))     return mat.GetColor(ColorPropertyId);
+            return Color.white;
         }
 
         public void OnSpawn()
@@ -58,16 +67,17 @@ namespace SkyloftGame.Enemy
             _ai.Init(_data, PlayerLocator.Current);
             _ai.StartAI();
 
-            SetRendererColor(Color.white);
+            SetRendererColor(_baseColor);
             EnemyRegistry.Register(this);
 
-            SpawnVfx(_spawnVfx);
+            _data.spawnVfx.Play(transform);
         }
 
         public void OnDespawn()
         {
             EnemyRegistry.Unregister(this);
             _ai.StopAI();
+            _hitFlashTween.Stop();
             IsDead    = true;
             OnDamaged = null;
             OnDied    = null;
@@ -83,7 +93,7 @@ namespace SkyloftGame.Enemy
             OnDamaged?.Invoke(effective, CurrentHp);
 
             if (_bodyRenderer != null)
-                StartCoroutine(HitFlashRoutine());
+                StartHitFlash();
 
             if (CurrentHp <= 0f)
                 Die();
@@ -99,29 +109,25 @@ namespace SkyloftGame.Enemy
             IsDead = true;
 
             EnemyRegistry.NotifyKilled(this);
-            SpawnDeathVfx();
+            _data.deathVfx.Play(transform);
             OnDied?.Invoke(this);
             _pooledObject.Release();
         }
 
-        private void SpawnDeathVfx() => SpawnVfx(_deathVfx);
-
-        private void SpawnVfx(PoolId vfx)
+        private void StartHitFlash()
         {
-            if (vfx == null || ObjectPooler.Instance == null) return;
-            ObjectPooler.Instance.Get(vfx, transform.position, Quaternion.identity);
-        }
+            _hitFlashTween.Stop();         // stop a running flash (re-triggered by a new hit)
+            SetRendererColor(_baseColor);  // return to normal first
 
-        private IEnumerator HitFlashRoutine()
-        {
-            SetRendererColor(Color.red);
-            yield return HitFlashDuration;
-            SetRendererColor(Color.white);
+            _hitFlashTween = Tween.Custom(this, 1f, 0f, _data.hitFlashDuration,   // then replay
+                (Enemy e, float t) => e.SetRendererColor(
+                    Color.Lerp(e._baseColor, e._data.hitFlashColor, t)));
         }
 
         private void SetRendererColor(Color color)
         {
             _bodyRenderer.GetPropertyBlock(_mpb);
+            _mpb.SetColor(BaseColorPropertyId, color);
             _mpb.SetColor(ColorPropertyId, color);
             _bodyRenderer.SetPropertyBlock(_mpb);
         }

@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 0bd1ea8e55c0e4dd2b2aef3c1cb4fbc5, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerHealthBar
   _health: {fileID: 7228019061542880219}
   _fill: {fileID: 5165856154959643834}
-  _faceCamera: 1
+  _data: {fileID: 11400000, guid: 774e439e79cb849c09ff54c251939b86, type: 2}
 --- !u!1 &4032028032435109855
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +204,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 609dcc3555814462aa7f915b4d814689, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.365
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 609dcc3555814462aa7f915b4d814689, type: 3}
       propertyPath: m_LocalPosition.y
@@ -355,7 +355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9debc6f73793a4479917a2af7ef6202f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerController
-  _moveSource: {fileID: 0}
+  _joystick: {fileID: 0}
   _data: {fileID: 11400000, guid: 2491bfc4d2f0a45dbb903d6a60f82fd1, type: 2}
 --- !u!114 &7228019061542880219
 MonoBehaviour:
@@ -384,6 +384,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerShooter
   _weapon: {fileID: 11400000, guid: 7c339ceea3f9640faa2a410ca0605a02, type: 2}
   _muzzle: {fileID: 3467743165628183161}
+  _shotBlockers:
+    serializedVersion: 2
+    m_Bits: 512
   _muzzleFlash: {fileID: 0}
 --- !u!114 &1067169842350813323
 MonoBehaviour:

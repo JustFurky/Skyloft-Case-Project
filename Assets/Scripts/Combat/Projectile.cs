@@ -48,17 +48,8 @@ namespace SkyloftGame.Combat
                 damageable.TakeDamage(_data.damage);
 
             AudioEvents.Play(AudioCue.Hit);
-            SpawnHitVfx(other.transform);
+            _data.hitVfx.Play(other.transform);
             _pooledObject.Release();
-        }
-
-        private void SpawnHitVfx(Transform enemy)
-        {
-            if (_data.hitVfx == null || ObjectPooler.Instance == null) return;
-
-            Vector3    position = enemy.position + enemy.forward * _data.hitVfxForwardOffset;
-            Quaternion rotation = Quaternion.LookRotation(-enemy.forward);
-            ObjectPooler.Instance.Get(_data.hitVfx, position, rotation);
         }
     }
 }

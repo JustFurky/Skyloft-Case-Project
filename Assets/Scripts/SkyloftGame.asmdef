@@ -5,7 +5,8 @@
         "PrimeTween.Runtime",
         "Unity.TextMeshPro",
         "UniTask",
-        "JoystickPack"
+        "JoystickPack",
+        "Zenject"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

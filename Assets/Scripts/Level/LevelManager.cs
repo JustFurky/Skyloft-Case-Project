@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 using SkyloftGame.Data;
 
 namespace SkyloftGame.Level
@@ -7,13 +8,14 @@ namespace SkyloftGame.Level
     {
         [SerializeField] private LevelDatabase _database;
 
+        [Inject] private DataManager _data;
+
         public LevelData Current      { get; private set; }
         public int       CurrentIndex { get; private set; } = -1;
         public int       Count        => _database != null ? _database.Count : 0;
         public bool      HasNext      => _database != null && CurrentIndex + 1 < _database.Count;
 
-        public int HighestUnlockedIndex =>
-            DataManager.Instance != null ? DataManager.Instance.Data.highestUnlockedLevel : 0;
+        public int HighestUnlockedIndex => _data != null ? _data.Data.highestUnlockedLevel : 0;
 
         private void Awake()
         {
@@ -43,7 +45,7 @@ namespace SkyloftGame.Level
         public void MarkCurrentCompleted()
         {
             int nextUnlocked = Mathf.Min(CurrentIndex + 1, Mathf.Max(0, Count - 1));
-            DataManager.Instance?.UnlockLevel(nextUnlocked);
+            _data?.UnlockLevel(nextUnlocked);
         }
     }
 }

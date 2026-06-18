@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 using SkyloftGame.Data;
 using SkyloftGame.Enemy;
 using EnemyUnit = SkyloftGame.Enemy.Enemy;
@@ -8,8 +9,10 @@ namespace SkyloftGame.Gameplay
 {
     public class ScoreService : MonoBehaviour, IScoreService
     {
+        [Inject] private DataManager _data;
+
         public int RunKills   { get; private set; }
-        public int TotalKills => DataManager.Instance != null ? DataManager.Instance.Data.totalEnemiesKilled : 0;
+        public int TotalKills => _data != null ? _data.Data.totalEnemiesKilled : 0;
 
         public event Action<int> OnRunKillsChanged;
 
@@ -25,7 +28,7 @@ namespace SkyloftGame.Gameplay
         private void HandleEnemyKilled(EnemyUnit enemy)
         {
             RunKills++;
-            DataManager.Instance?.AddEnemyKill();
+            _data?.AddEnemyKill();
             OnRunKillsChanged?.Invoke(RunKills);
         }
     }

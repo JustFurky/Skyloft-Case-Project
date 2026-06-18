@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.UI
@@ -10,17 +11,18 @@ namespace SkyloftGame.UI
         [SerializeField] private UIPanel _gameWonPanel;
         [SerializeField] private UIPanel _gameLostPanel;
 
-        private void OnEnable()
+        [Inject] private GameStateManager _game;
+
+        private void Start()
         {
-            if (GameStateManager.Instance == null) return;
-            GameStateManager.Instance.OnStateChanged += HandleStateChanged;
-            HandleStateChanged(GameStateType.None, GameStateManager.Instance.CurrentState);
+            if (_game == null) return;
+            _game.OnStateChanged += HandleStateChanged;
+            HandleStateChanged(GameStateType.None, _game.CurrentState);
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
-            if (GameStateManager.Instance != null)
-                GameStateManager.Instance.OnStateChanged -= HandleStateChanged;
+            if (_game != null) _game.OnStateChanged -= HandleStateChanged;
         }
 
         private void HandleStateChanged(GameStateType previous, GameStateType next)

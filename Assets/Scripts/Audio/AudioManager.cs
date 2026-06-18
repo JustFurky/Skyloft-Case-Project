@@ -1,16 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 using SkyloftGame.Enemy;
 using SkyloftGame.StateMachine;
 using EnemyUnit = SkyloftGame.Enemy.Enemy;
 
 namespace SkyloftGame.Audio
 {
-    [DefaultExecutionOrder(-90)]
     public class AudioManager : MonoBehaviour
     {
-        public static AudioManager Instance { get; private set; }
-
         [System.Serializable]
         private struct CueClip
         {
@@ -30,41 +28,33 @@ namespace SkyloftGame.Audio
         [Header("SFX Mappings")]
         [SerializeField] private CueClip[] _cues;
 
+        private GameStateManager _game;
+
         private readonly Dictionary<AudioCue, CueClip> _clipByCue = new();
 
         private void Awake()
         {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            Instance = this;
-
-            if (transform.parent != null) transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
-
             foreach (var entry in _cues)
                 _clipByCue[entry.cue] = entry;
         }
 
-        private void OnEnable()
+        [Inject]
+        private void Construct(GameStateManager game)
         {
+            _game = game;
+
             AudioEvents.CuePlayed += PlayCue;
             EnemyRegistry.Killed  += HandleEnemyKilled;
-
-            if (GameStateManager.Instance != null)
-            {
-                GameStateManager.Instance.OnStateChanged += HandleStateChanged;
-                HandleStateChanged(GameStateType.None, GameStateManager.Instance.CurrentState);
-            }
+            _game.OnStateChanged  += HandleStateChanged;
+            HandleStateChanged(GameStateType.None, _game.CurrentState);
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             AudioEvents.CuePlayed -= PlayCue;
             EnemyRegistry.Killed  -= HandleEnemyKilled;
-            if (GameStateManager.Instance != null)
-                GameStateManager.Instance.OnStateChanged -= HandleStateChanged;
+            if (_game != null) _game.OnStateChanged -= HandleStateChanged;
         }
-
-        private void OnDestroy() { if (Instance == this) Instance = null; }
 
         private void HandleEnemyKilled(EnemyUnit _) => PlayCue(AudioCue.EnemyDeath);
 

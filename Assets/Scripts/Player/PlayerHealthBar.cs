@@ -1,3 +1,4 @@
+using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,9 +12,12 @@ namespace SkyloftGame.Player
         [Tooltip("Fill image with Image Type = Filled.")]
         [SerializeField] private Image _fill;
 
-        [SerializeField] private bool _faceCamera = true;
+        [Tooltip("Duration, target colors and billboard behaviour.")]
+        [SerializeField] private HealthBarData _data;
 
         private Transform _cameraTransform;
+        private Tween     _fillTween;
+        private Tween     _colorTween;
 
         private void Awake()
         {
@@ -31,18 +35,32 @@ namespace SkyloftGame.Player
         private void OnDisable()
         {
             if (_health != null) _health.OnHealthChanged -= Refresh;
+            _fillTween.Stop();
+            _colorTween.Stop();
         }
 
         private void LateUpdate()
         {
-            if (_faceCamera && _cameraTransform != null)
+            if (_data != null && _data.faceCamera && _cameraTransform != null)
                 transform.forward = _cameraTransform.forward;
         }
 
         private void Refresh(float current, float max)
         {
-            if (_fill != null)
-                _fill.fillAmount = max > 0f ? current / max : 0f;
+            if (_fill == null) return;
+
+            float ratio    = max > 0f ? current / max : 0f;
+            float duration = _data != null ? _data.fillDuration : 0.2f;
+
+            _fillTween.Stop();
+            _fillTween = Tween.UIFillAmount(_fill, ratio, duration);
+
+            if (_data != null)
+            {
+                Color color = Color.Lerp(_data.lowHealthColor, _data.fullHealthColor, ratio);
+                _colorTween.Stop();
+                _colorTween = Tween.Color(_fill, color, duration);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.Player
@@ -8,6 +9,8 @@ namespace SkyloftGame.Player
     {
         [Tooltip("Health (maxHp) is read from here. Assign the same asset as PlayerController.")]
         [SerializeField] private PlayerData _data;
+
+        private GameStateManager _game;
 
         private const float FallbackMaxHp = 100f;
 
@@ -26,16 +29,16 @@ namespace SkyloftGame.Player
             CurrentHp = MaxHp;
         }
 
-        private void OnEnable()
+        [Inject]
+        private void Construct(GameStateManager game)
         {
-            if (GameStateManager.Instance != null)
-                GameStateManager.Instance.OnStateChanged += HandleStateChanged;
+            _game = game;
+            _game.OnStateChanged += HandleStateChanged;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
-            if (GameStateManager.Instance != null)
-                GameStateManager.Instance.OnStateChanged -= HandleStateChanged;
+            if (_game != null) _game.OnStateChanged -= HandleStateChanged;
         }
 
         public void TakeDamage(float amount)
@@ -52,7 +55,7 @@ namespace SkyloftGame.Player
         {
             if (IsDead) return;
             IsDead = true;
-            GameStateManager.Instance?.LoseGame();
+            _game?.LoseGame();
         }
 
         private void ResetHealth()

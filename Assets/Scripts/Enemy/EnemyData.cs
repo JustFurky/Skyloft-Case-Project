@@ -1,4 +1,5 @@
 using UnityEngine;
+using SkyloftGame.VFX;
 
 namespace SkyloftGame.Enemy
 {
@@ -28,6 +29,17 @@ namespace SkyloftGame.Enemy
         [Min(0f)] public float attackDamage    = 10f;
         [Min(0f)] public float attackRange     = 1.5f;
         [Min(0.1f)] public float attackCooldown = 1f;
+
+        [Header("VFX")]
+        public VfxSpawn spawnVfx = new();
+        public VfxSpawn deathVfx = new() { upOffset = 0.5f };
+
+        [Header("Hit Flash")]
+        [Tooltip("Tint applied briefly when the enemy takes damage (slight red).")]
+        public Color hitFlashColor = new(1f, 0.5f, 0.5f, 1f);
+
+        [Tooltip("How long the hit flash lasts before returning to the base color (seconds).")]
+        [Min(0f)] public float hitFlashDuration = 0.08f;
 
         [Header("Reward")]
         [Min(0)]  public int scoreValue       = 10;

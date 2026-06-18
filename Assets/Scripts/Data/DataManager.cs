@@ -1,36 +1,23 @@
 using UnityEngine;
+using Zenject;
 
 namespace SkyloftGame.Data
 {
-    [DefaultExecutionOrder(-200)]
     public class DataManager : MonoBehaviour
     {
-        public static DataManager Instance { get; private set; }
-
         public GameData Data { get; private set; }
 
         private IDataService _service;
 
-        private void Awake()
-        {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            Instance = this;
-
-            if (transform.parent != null) transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
-
-            _service ??= new EncryptedJsonDataService();
-            Data = _service.Load();
-        }
-
-        private void OnApplicationQuit() => _service.Save(Data);
-        private void OnApplicationPause(bool paused) { if (paused) _service.Save(Data); }
-
-        public void InjectService(IDataService service)
+        [Inject]
+        public void Construct(IDataService service)
         {
             _service = service;
             Data     = _service.Load();
         }
+
+        private void OnApplicationQuit() => _service?.Save(Data);
+        private void OnApplicationPause(bool paused) { if (paused) _service?.Save(Data); }
 
         public void AddEnemyKill() => Data.totalEnemiesKilled++;
 

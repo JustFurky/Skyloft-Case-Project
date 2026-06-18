@@ -2,6 +2,7 @@ using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Zenject;
 using SkyloftGame.Gameplay;
 
 namespace SkyloftGame.UI
@@ -18,25 +19,35 @@ namespace SkyloftGame.UI
         [Tooltip("Blink duration is read from here (same asset as EnemySpawner).")]
         [SerializeField] private WaveSettings _waveSettings;
 
+        private GameStateManager _game;
+        private PauseController  _pause;
+
         private ICountdownTimer _timer;
         private IScoreService   _score;
         private IEnemySpawner   _spawner;
         private Sequence        _blink;
 
+        [Inject]
+        private void Construct(GameStateManager game, PauseController pause)
+        {
+            _game  = game;
+            _pause = pause;
+        }
+
         protected override void Awake()
         {
             base.Awake();
             if (_pauseButton != null)
-                _pauseButton.onClick.AddListener(() => PauseController.Instance?.Pause());
+                _pauseButton.onClick.AddListener(() => _pause?.Pause());
         }
 
         private void OnEnable()
         {
-            if (GameStateManager.Instance != null)
+            if (_game != null)
             {
-                _timer   = GameStateManager.Instance.Timer;
-                _score   = GameStateManager.Instance.Score;
-                _spawner = GameStateManager.Instance.Spawner;
+                _timer   = _game.Timer;
+                _score   = _game.Score;
+                _spawner = _game.Spawner;
             }
 
             if (_timer != null)

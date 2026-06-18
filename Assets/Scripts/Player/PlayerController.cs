@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
+using Zenject;
 using SkyloftGame.Core;
+using SkyloftGame.Gameplay;
 using SkyloftGame.StateMachine;
 
 namespace SkyloftGame.Player
@@ -15,6 +17,9 @@ namespace SkyloftGame.Player
         [Header("Data")]
         [Tooltip("Movement, rotation, gravity and arena boundary parameters.")]
         [SerializeField] private PlayerData _data;
+
+        private GameStateManager _game;
+        private PauseController  _pause;
 
         private CharacterController _cc;
         private PlayerTargeting     _targeting;
@@ -32,27 +37,27 @@ namespace SkyloftGame.Player
                 Debug.LogError("[PlayerController] PlayerData is not assigned; the player will not move.", this);
         }
 
-        private void OnEnable()
+        [Inject]
+        private void Construct(GameStateManager game, PauseController pause)
         {
-            PlayerLocator.Set(transform);
-
-            if (GameStateManager.Instance != null)
-            {
-                GameStateManager.Instance.OnStateChanged += HandleStateChanged;
-                _controlEnabled = GameStateManager.Instance.CurrentState == GameStateType.Playing;
-            }
+            _game  = game;
+            _pause = pause;
+            _game.OnStateChanged += HandleStateChanged;
+            _controlEnabled = _game.CurrentState == GameStateType.Playing;
         }
 
-        private void OnDisable()
+        private void OnEnable()  => PlayerLocator.Set(transform);
+        private void OnDisable() => PlayerLocator.Clear(transform);
+
+        private void OnDestroy()
         {
-            PlayerLocator.Clear(transform);
-            if (GameStateManager.Instance != null)
-                GameStateManager.Instance.OnStateChanged -= HandleStateChanged;
+            if (_game != null) _game.OnStateChanged -= HandleStateChanged;
         }
 
         private void Update()
         {
             if (_data == null) return;
+            if (_pause != null && _pause.IsPaused) return;
 
             Vector2 input = _controlEnabled && _joystick != null ? _joystick.Direction : Vector2.zero;
             Vector3 move  = new(input.x, 0f, input.y);

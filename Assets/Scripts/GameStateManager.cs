@@ -1,50 +1,53 @@
 using System;
 using UnityEngine;
+using Zenject;
 using SkyloftGame.StateMachine;
 using SkyloftGame.States;
 using SkyloftGame.Level;
 using SkyloftGame.Gameplay;
+using SkyloftGame.Data;
 
-[DefaultExecutionOrder(-100)]
 public class GameStateManager : MonoBehaviour
 {
-    public static GameStateManager Instance { get; private set; }
-
-    [Header("Subsystems (scene references)")]
-    [SerializeField] private LevelManager _levelManager;
-    [SerializeField] private EnemySpawner _enemySpawner;
-    [SerializeField] private ScoreService _scoreService;
-
     [Header("Startup")]
     [SerializeField] private GameStateType _initialState = GameStateType.Menu;
 
-    public ILevelService   Level   => _levelManager;
-    public IEnemySpawner   Spawner => _enemySpawner;
-    public IScoreService   Score   => _scoreService;
-    public ICountdownTimer Timer   { get; private set; }
+    private ILevelService   _level;
+    private IEnemySpawner   _spawner;
+    private IScoreService   _score;
+    private ICountdownTimer _timer;
+    private DataManager     _data;
 
-    public GameStateType CurrentState  => _machine.CurrentStateType;
-    public GameStateType PreviousState => _machine.PreviousStateType;
+    public ILevelService   Level   => _level;
+    public IEnemySpawner   Spawner => _spawner;
+    public IScoreService   Score   => _score;
+    public ICountdownTimer Timer   => _timer;
+    public DataManager     Data    => _data;
+
+    public GameStateType CurrentState  => _machine != null ? _machine.CurrentStateType  : GameStateType.None;
+    public GameStateType PreviousState => _machine != null ? _machine.PreviousStateType : GameStateType.None;
 
     public event Action<GameStateType, GameStateType> OnStateChanged;
 
     private GameStateMachine _machine;
 
-    private void Awake()
+    [Inject]
+    private void Construct(ILevelService level, IEnemySpawner spawner, IScoreService score,
+                           ICountdownTimer timer, DataManager data)
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-        Instance = this;
+        _level   = level;
+        _spawner = spawner;
+        _score   = score;
+        _timer   = timer;
+        _data    = data;
 
-        Timer = new CountdownTimer();
-        Timer.OnElapsed += HandleTimerElapsed;
-
+        _timer.OnElapsed += HandleTimerElapsed;
         InitializeMachine();
     }
 
     private void OnDestroy()
     {
-        if (Instance == this) Instance = null;
-        if (Timer != null) Timer.OnElapsed -= HandleTimerElapsed;
+        if (_timer != null) _timer.OnElapsed -= HandleTimerElapsed;
     }
 
     private void InitializeMachine()
@@ -53,13 +56,13 @@ public class GameStateManager : MonoBehaviour
         _machine.RegisterState(GameStateType.Menu,     new MenuState(this));
         _machine.RegisterState(GameStateType.Playing,  new PlayingState(this));
         _machine.RegisterState(GameStateType.GameWon,  new GameWonState(this));
-        _machine.RegisterState(GameStateType.GameLost, new GameLostState(this));
+        _machine.RegisterState(GameStateType.GameLost, new GameLostState(this, _data));
         _machine.OnStateChanged += (prev, next) => OnStateChanged?.Invoke(prev, next);
         _machine.TransitionTo(_initialState);
     }
 
-    private void Update()      => _machine.Update();
-    private void FixedUpdate() => _machine.FixedUpdate();
+    private void Update()      => _machine?.Update();
+    private void FixedUpdate() => _machine?.FixedUpdate();
 
     public void ChangeState(GameStateType state) => _machine.TransitionTo(state);
 
@@ -70,7 +73,7 @@ public class GameStateManager : MonoBehaviour
 
     public void StartNewGame()
     {
-        SkyloftGame.Data.DataManager.Instance?.ResetLevelProgress();
+        _data?.ResetLevelProgress();
         Level?.Load(0);
         StartGame();
     }

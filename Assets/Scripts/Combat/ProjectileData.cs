@@ -1,5 +1,5 @@
 using UnityEngine;
-using SkyloftGame.Pool;
+using SkyloftGame.VFX;
 
 namespace SkyloftGame.Combat
 {
@@ -18,10 +18,6 @@ namespace SkyloftGame.Combat
         public LayerMask hitLayers;
 
         [Header("Hit VFX")]
-        [Tooltip("VFX pool played on hit (can be left empty).")]
-        public PoolId hitVfx;
-
-        [Tooltip("Distance the hit VFX is placed in front of the enemy (forward direction), in units.")]
-        public float hitVfxForwardOffset = 0.1f;
+        public VfxSpawn hitVfx = new() { forwardOffset = 0.1f, upOffset = 0.5f, faceOrigin = true };
     }
 }

@@ -5,13 +5,19 @@ namespace SkyloftGame.States
     public class GameLostState : StateMachine.IState
     {
         private readonly GameStateManager _manager;
-        public GameLostState(GameStateManager manager) => _manager = manager;
+        private readonly DataManager      _data;
+
+        public GameLostState(GameStateManager manager, DataManager data)
+        {
+            _manager = manager;
+            _data    = data;
+        }
 
         public void Enter()
         {
             _manager.Spawner?.StopAndClear();
             _manager.Timer?.Stop();
-            DataManager.Instance?.Save();
+            _data?.Save();
         }
 
         public void Update()      { }

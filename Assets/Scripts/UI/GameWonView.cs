@@ -2,6 +2,7 @@ using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Zenject;
 
 namespace SkyloftGame.UI
 {
@@ -14,18 +15,20 @@ namespace SkyloftGame.UI
         [SerializeField] private Button   _replayButton;
         [SerializeField] private Button   _menuButton;
 
+        [Inject] private GameStateManager _game;
+
         protected override void Awake()
         {
             base.Awake();
 
-            if (_nextLevelButton != null) _nextLevelButton.onClick.AddListener(() => GameStateManager.Instance.GoToNextLevel());
-            if (_replayButton != null)    _replayButton.onClick.AddListener(() => GameStateManager.Instance.ReplayLevel());
-            if (_menuButton != null)      _menuButton.onClick.AddListener(() => GameStateManager.Instance.GoToMenu());
+            if (_nextLevelButton != null) _nextLevelButton.onClick.AddListener(() => _game.GoToNextLevel());
+            if (_replayButton != null)    _replayButton.onClick.AddListener(() => _game.ReplayLevel());
+            if (_menuButton != null)      _menuButton.onClick.AddListener(() => _game.GoToMenu());
         }
 
         protected override void OnBeforeShow()
         {
-            var gsm = GameStateManager.Instance;
+            var gsm = _game;
             if (gsm == null) return;
 
             int runKills = gsm.Score?.RunKills ?? 0;

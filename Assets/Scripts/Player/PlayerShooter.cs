@@ -1,6 +1,9 @@
 using UnityEngine;
+using UnityEngine.AI;
+using Zenject;
 using SkyloftGame.Audio;
 using SkyloftGame.Combat;
+using SkyloftGame.Gameplay;
 using SkyloftGame.Pool;
 using SkyloftGame.StateMachine;
 
@@ -16,11 +19,25 @@ namespace SkyloftGame.Player
         [Header("Fire")]
         [SerializeField] private Transform _muzzle;
 
+        [Tooltip("Layers that block the shot (e.g. EnvironmentBlocker). " +
+                 "If anything on these layers is between muzzle and target, the player holds fire.")]
+        [SerializeField] private LayerMask _shotBlockers;
+
         [Header("VFX (optional)")]
         [SerializeField] private ParticleSystem _muzzleFlash;
 
+        private GameStateManager _game;
+        private PauseController  _pause;
+
         private PlayerTargeting _targeting;
         private float _cooldown;
+
+        [Inject]
+        private void Construct(GameStateManager game, PauseController pause)
+        {
+            _game  = game;
+            _pause = pause;
+        }
 
         private void Awake()
         {
@@ -32,9 +49,8 @@ namespace SkyloftGame.Player
         private void Update()
         {
             if (_weapon == null) return;
-            if (GameStateManager.Instance == null ||
-                GameStateManager.Instance.CurrentState != GameStateType.Playing)
-                return;
+            if (_game == null || _game.CurrentState != GameStateType.Playing) return;
+            if (_pause != null && _pause.IsPaused) return;
 
             _cooldown -= Time.deltaTime;
             if (_cooldown > 0f) return;
@@ -42,13 +58,26 @@ namespace SkyloftGame.Player
             var target = _targeting.CurrentTarget;
             if (target == null) return;
 
-            FireAt(target.position);
+            Vector3 origin = _muzzle != null ? _muzzle.position : transform.position;
+            if (IsShotBlocked(origin, target.position)) return;   // hold fire, retry next frame
+
+            FireAt(origin, target.position);
             _cooldown = 1f / Mathf.Max(0.01f, _weapon.fireRate);
         }
 
-        private void FireAt(Vector3 targetPosition)
+        private bool IsShotBlocked(Vector3 origin, Vector3 targetPosition)
         {
-            Vector3 origin    = _muzzle != null ? _muzzle.position : transform.position;
+            if (Physics.Linecast(origin, targetPosition, _shotBlockers, QueryTriggerInteraction.Ignore))
+                return true;
+
+            if (NavMesh.Raycast(transform.position, targetPosition, out _, NavMesh.AllAreas))
+                return true;
+
+            return false;
+        }
+
+        private void FireAt(Vector3 origin, Vector3 targetPosition)
+        {
             Vector3 direction = targetPosition - origin;
             direction.y = 0f;
             direction.Normalize();
