@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using Zenject;
 using SkyloftGame.Gameplay;
@@ -8,35 +7,18 @@ namespace SkyloftGame.UI
 {
     public class PauseView : UIPanel
     {
-        [SerializeField] private Button   _resumeButton;
-        [SerializeField] private Button   _menuButton;
-        [SerializeField] private TMP_Text _countdownLabel;
+        [SerializeField] private GameObject _resumeButton;
+        [SerializeField] private GameObject _menuButton;
+        [SerializeField] private TMP_Text   _countdownLabel;
 
-        private PauseController  _pause;
-        private GameStateManager _game;
+        private PauseController _pause;
 
         [Inject]
-        public void Construct(PauseController pause, GameStateManager game)
+        private void Construct(PauseController pause)
         {
             _pause = pause;
-            _game  = game;
             _pause.OnPauseChanged      += HandlePauseChanged;
             _pause.ResumeCountdownTick += HandleResumeCountdownTick;
-        }
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            if (_resumeButton != null)
-                _resumeButton.onClick.AddListener(() => _pause?.RequestResume());
-
-            if (_menuButton != null)
-                _menuButton.onClick.AddListener(() =>
-                {
-                    _pause?.Resume();
-                    _game?.GoToMenu();
-                });
         }
 
         private void OnDestroy()
@@ -74,8 +56,8 @@ namespace SkyloftGame.UI
 
         private void SetButtonsActive(bool active)
         {
-            if (_resumeButton != null) _resumeButton.gameObject.SetActive(active);
-            if (_menuButton != null)   _menuButton.gameObject.SetActive(active);
+            if (_resumeButton != null) _resumeButton.SetActive(active);
+            if (_menuButton != null)   _menuButton.SetActive(active);
         }
     }
 }

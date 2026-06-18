@@ -18,11 +18,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1653390822291925619, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_fontSize
-      value: 63.35
+      value: 48.3
       objectReference: {fileID: 0}
     - target: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_Name
       value: Button_NextLevel Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7230266674834465112, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_Pivot.x
@@ -107,5 +139,54 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6439713444860234619}
   m_SourcePrefab: {fileID: 100100000, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+--- !u!114 &2472882789265902596 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1031460102890433408, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 3170827381553932164}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1 &3674551517910793606 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 3170827381553932164}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6439713444860234619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3674551517910793606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e71241aa6b1d74d939f4fc94d87d5b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SkyloftGame::SkyloftGame.UI.NextLevelButton
+  _catalog: {fileID: 11400000, guid: 22e3bd01069ea4b73b47d769cf895f6f, type: 2}
+  _id: 3
+  _icon: {fileID: 2472882789265902596}
+  _label: {fileID: 4247752640857066999}
+  _clickCue: 5
+  _pressedScale: 0.9
+  _feedbackDuration: 0.06
+--- !u!114 &4247752640857066999 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1653390822291925619, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 3170827381553932164}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI

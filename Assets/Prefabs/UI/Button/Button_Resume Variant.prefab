@@ -8,17 +8,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1031460102890433408, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 512bd0c4fac724aecadfe550831d45fb, type: 3}
     - target: {fileID: 1653390822291925619, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_text
-      value: Continue
+      value: Resume
       objectReference: {fileID: 0}
     - target: {fileID: 1653390822291925619, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_fontSize
-      value: 57.75
+      value: 66.6
       objectReference: {fileID: 0}
     - target: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_Name
-      value: Button_Continue Variant
+      value: Button_Resume Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_AnchorMax.y
@@ -135,5 +139,54 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6237212312949173684}
   m_SourcePrefab: {fileID: 100100000, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+--- !u!114 &5344259323236390853 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1031460102890433408, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 4934508085840886853}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &5947252643147503158 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1653390822291925619, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 4934508085840886853}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &6522706920220780103 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 4934508085840886853}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6237212312949173684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6522706920220780103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23ab50a2473d941989cabc04e134b05d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SkyloftGame::SkyloftGame.UI.ResumeButton
+  _catalog: {fileID: 11400000, guid: 22e3bd01069ea4b73b47d769cf895f6f, type: 2}
+  _id: 6
+  _icon: {fileID: 5344259323236390853}
+  _label: {fileID: 5947252643147503158}
+  _clickCue: 5
+  _pressedScale: 0.9
+  _feedbackDuration: 0.06

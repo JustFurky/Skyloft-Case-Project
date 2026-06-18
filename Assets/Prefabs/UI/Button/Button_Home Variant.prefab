@@ -8,9 +8,49 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1031460102890433408, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 58812f86f12b042f585c0a58908d8fbd, type: 3}
+    - target: {fileID: 1653390822291925619, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_text
+      value: Menu
+      objectReference: {fileID: 0}
     - target: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_Name
       value: Button_Home Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208428855842477146, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7230266674834465112, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_Pivot.x
@@ -95,5 +135,54 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4593738009482824811}
   m_SourcePrefab: {fileID: 100100000, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+--- !u!114 &3326078442211556116 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1031460102890433408, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 2339868251835535508}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &3930208670700731111 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1653390822291925619, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 2339868251835535508}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &4505651659794565782 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 2339868251835535508}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4593738009482824811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4505651659794565782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563e88c8de4f6469db5979d5be3f0816, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SkyloftGame::SkyloftGame.UI.MenuButton
+  _catalog: {fileID: 11400000, guid: 22e3bd01069ea4b73b47d769cf895f6f, type: 2}
+  _id: 2
+  _icon: {fileID: 3326078442211556116}
+  _label: {fileID: 3930208670700731111}
+  _clickCue: 5
+  _pressedScale: 0.9
+  _feedbackDuration: 0.06

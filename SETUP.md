@@ -200,7 +200,22 @@ prefab/sahne yalnızca asset'i referanslar (DRY + paylaşılabilir + tasarımcı
   işaretli olmalı (timeScale=0 iken animasyon için). Pasif başlatılabilir; PauseController
   olayıyla açılır. **Continue** → butonlar gizlenir, label 3→2→1 sayar (gerçek zaman, oyun
   duruyorken) ve süre bitince oyun devam eder. Sayı `PauseController.Resume Countdown Seconds`.
-- **Tık sesi (opsiyonel):** Ses istenen butonlara `ButtonClickSound` ekle.
+- **Buton sistemi (`ButtonBase` / `IButton`):** Her buton kendi sınıfını taşır — view'lar
+  artık `onClick` bağlamaz. İlgili Button GameObject'ine şu bileşenlerden birini ekle:
+  - Menü: **ContinueGameButton** (Start/Devam), **NewGameButton**
+  - GameWon: **NextLevelButton**, **ReplayButton**, **MenuButton**
+  - GameLost: **ReplayButton**, **MenuButton**
+  - HUD: **PauseButton** · Pause paneli: **ResumeButton** (Continue), **MenuButton**
+  `ButtonBase`; `Icon` (Image) / `Label` (TMP_Text) referansları + tık SFX'i içerir;
+  bağımlılıklar Zenject ile enjekte edilir. **ButtonClickSound kaldırıldı** (SFX artık ButtonBase'de).
+- **Buton içerik kataloğu (`ButtonCatalog` — TEK asset):** `Create → SkyloftGame/Button Catalog`
+  ile **bir tane** asset oluştur; `Entries` listesine her buton için satır ekle: `ButtonId` (enum)
+  + `label` + `icon`. ButtonBase'te **Catalog** = bu asset, **Id** = ilgili enum → içerik otomatik
+  çekilir (editörde canlı önizleme dahil). Yeni buton eklemek = enum'a değer + kataloğa satır
+  + buton sınıfı. Tek yerden tüm metin/ikonları yönetirsin.
+  View'lardaki görünürlük alanları (GameWonView `Next Level Button` GameObject'i, PauseView
+  `Resume/Menu Button` GameObject'leri, `Countdown Label`) hâlâ bağlanır — bunlar sadece
+  göster/gizle içindir, tıklama değil.
 
 ### 3.9 NavMesh
 - Zemin için **Navigation** penceresinden NavMesh bake et.

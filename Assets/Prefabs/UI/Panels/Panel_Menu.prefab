@@ -244,8 +244,6 @@ MonoBehaviour:
   _fadeDuration: 0.25
   _scaleOnShow: 1
   _useUnscaledTime: 0
-  _startButton: {fileID: 8070918030665900027}
-  _newGameButton: {fileID: 5848276724282335739}
   _progressLabel: {fileID: 3641917064344787319}
 --- !u!1 &6467159899248487812
 GameObject:
@@ -430,8 +428,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 2381455522418302676}
     m_Modifications:
     - target: {fileID: 1212334502764132948, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212334502764132948, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212334502764132948, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 98.71123
+      objectReference: {fileID: 0}
+    - target: {fileID: 1212334502764132948, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -70
       objectReference: {fileID: 0}
     - target: {fileID: 1716557014687243075, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
       propertyPath: m_Pivot.x
@@ -514,8 +524,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5323862817114664513, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5323862817114664513, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5323862817114664513, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 398.71124
+      objectReference: {fileID: 0}
+    - target: {fileID: 5323862817114664513, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -70
       objectReference: {fileID: 0}
     - target: {fileID: 7888852091065753625, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
       propertyPath: m_Name
@@ -531,17 +553,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1716557014687243075, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
   m_PrefabInstance: {fileID: 4840252020656620788}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8070918030665900027 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3687795803632966415, guid: bdbde1829c2e84678a4d6af28479e951, type: 3}
-  m_PrefabInstance: {fileID: 4840252020656620788}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &7996728656954905111
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -630,9 +641,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2030538052270543543, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2030538052270543543, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2030538052270543543, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 59.146576
+      objectReference: {fileID: 0}
+    - target: {fileID: 2030538052270543543, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4980085435285685922, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4980085435285685922, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4980085435285685922, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 309.14658
+      objectReference: {fileID: 0}
+    - target: {fileID: 4980085435285685922, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 7026791317323188474, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
       propertyPath: m_Name
@@ -643,17 +682,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
---- !u!114 &5848276724282335739 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4599115206054081516, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}
-  m_PrefabInstance: {fileID: 7996728656954905111}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!224 &8491116594298347959 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1958106882025993120, guid: b665653fefd17426dbfcbf2c892c75e5, type: 3}

@@ -204,7 +204,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 609dcc3555814462aa7f915b4d814689, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.365
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 609dcc3555814462aa7f915b4d814689, type: 3}
       propertyPath: m_LocalPosition.y
@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589b985a8eb4143b98936937d7286235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyloftGame.Player.PlayerTargeting
-  _range: 8
+  _range: 4
   _targetLayers:
     serializedVersion: 2
     m_Bits: 64

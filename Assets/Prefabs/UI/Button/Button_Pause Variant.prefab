@@ -18,19 +18,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7158029018637107279, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
       propertyPath: m_SizeDelta.x
@@ -128,5 +128,43 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 3104762777717948329, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5824957336020027903}
   m_SourcePrefab: {fileID: 100100000, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+--- !u!114 &5121597933120268206 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1031460102890433408, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 5279319721886845998}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1 &6322001402653365804 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2233692605838481922, guid: 19bc271cdc301408a88ecf0375cf2966, type: 3}
+  m_PrefabInstance: {fileID: 5279319721886845998}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5824957336020027903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6322001402653365804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d71f09b3e7b47fda67e4a3a5ec060f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SkyloftGame::SkyloftGame.UI.PauseButton
+  _catalog: {fileID: 11400000, guid: 22e3bd01069ea4b73b47d769cf895f6f, type: 2}
+  _id: 5
+  _icon: {fileID: 5121597933120268206}
+  _label: {fileID: 0}
+  _clickCue: 5
+  _pressedScale: 0.9
+  _feedbackDuration: 0.06

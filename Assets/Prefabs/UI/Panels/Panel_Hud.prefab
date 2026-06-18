@@ -146,7 +146,6 @@ MonoBehaviour:
   _useUnscaledTime: 0
   _timerLabel: {fileID: 3762889342968108582}
   _killsLabel: {fileID: 4465665734816752186}
-  _pauseButton: {fileID: 8923152015601650174}
   _waveCountdownLabel: {fileID: 306166892789284473}
   _waveSettings: {fileID: 11400000, guid: 5843ad665f5fc46f6aaea4cb76b629aa, type: 2}
 --- !u!1 &3280673101211762464
@@ -313,7 +312,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 85.75
+  m_fontSize: 87.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -796,7 +795,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3032475228569209953, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3032475228569209953, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
       propertyPath: m_AnchorMin.x
@@ -804,15 +803,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3032475228569209953, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3032475228569209953, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3032475228569209953, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 3248494371130961270, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
       propertyPath: m_Pivot.x
@@ -908,14 +907,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3248494371130961270, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
   m_PrefabInstance: {fileID: 8232120713666487492}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8923152015601650174 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 714728013044297018, guid: 5d479109c6bd143ac80234a3ae14029c, type: 3}
-  m_PrefabInstance: {fileID: 8232120713666487492}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
