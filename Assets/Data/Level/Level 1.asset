@@ -15,11 +15,12 @@ MonoBehaviour:
   levelIndex: 0
   displayName: Level 1
   durationSeconds: 180
-  waves:
+  firstWaveDelay: 2
+  timeBetweenWaves: 10
+  spawnInterval: 0.3
+  enemiesPerWave:
   - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
     count: 10
-    spawnInterval: 1
-    startDelay: 2
   spawnRadius: 14
   minSpawnDistance: 7
   maxAliveEnemies: 60

@@ -41,7 +41,11 @@ namespace SkyloftGame.Enemy
         public void StartAI()
         {
             if (_aiCts != null) return;
+
+            // Reset to Chase AND notify, so a pooled/respawned enemy refreshes its animator
+            // to the run state instead of keeping a stale (e.g. attack) pose from its last life.
             CurrentState = EnemyStateType.Chase;
+            OnStateChanged?.Invoke(CurrentState);
 
             if (_agent.isActiveAndEnabled && _agent.isOnNavMesh)
                 _agent.isStopped = false;

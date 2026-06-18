@@ -85,7 +85,7 @@ namespace SkyloftGame.Enemy
 
         public void TakeDamage(float amount)
         {
-            if (IsDead) return;
+            if (IsDead || _data == null) return;
 
             float effective = Mathf.Max(0f, amount * (1f - _data.armor));
             CurrentHp -= effective;

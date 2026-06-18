@@ -15,19 +15,12 @@ MonoBehaviour:
   levelIndex: 2
   displayName: Level 3
   durationSeconds: 180
-  waves:
+  firstWaveDelay: 2
+  timeBetweenWaves: 20
+  spawnInterval: 0.15
+  enemiesPerWave:
   - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
     count: 40
-    spawnInterval: 0.2
-    startDelay: 2
-  - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
-    count: 50
-    spawnInterval: 0.2
-    startDelay: 2
-  - enemy: {fileID: 11400000, guid: bb4270948e8c34c7eb4586bb00db91b8, type: 2}
-    count: 60
-    spawnInterval: 0.2
-    startDelay: 2
   spawnRadius: 14
   minSpawnDistance: 7
   maxAliveEnemies: 60

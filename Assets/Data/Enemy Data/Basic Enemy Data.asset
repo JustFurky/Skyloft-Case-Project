@@ -17,8 +17,8 @@ MonoBehaviour:
   armor: 0
   moveSpeed: 3.5
   angularSpeed: 360
-  acceleration: 8
-  stoppingDistance: 1.2
+  acceleration: 12
+  stoppingDistance: 1.5
   pathUpdateInterval: 0.2
   attackDamage: 10
   attackRange: 1.5

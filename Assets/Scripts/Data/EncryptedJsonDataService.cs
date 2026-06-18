@@ -13,11 +13,16 @@ namespace SkyloftGame.Data
 
         private readonly byte[] _key;
 
+        // Stable, app-embedded key seed. Deliberately NOT derived from
+        // SystemInfo.deviceUniqueIdentifier, which changes on reinstall / OS
+        // update / hardware change and silently invalidates every existing save.
+        // This protects local save integrity, not anti-piracy.
+        private const string KeySeed = "mft_skyloft_case";
+
         public EncryptedJsonDataService()
         {
-            string seed = SystemInfo.deviceUniqueIdentifier + "SKY_SALT_42";
             using var sha = SHA256.Create();
-            byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(seed));
+            byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(KeySeed));
 
             _key = new byte[32];
             Array.Copy(hash, 0, _key, 0, 32);

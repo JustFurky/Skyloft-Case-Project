@@ -83,6 +83,8 @@ namespace SkyloftGame.Player
             direction.Normalize();
             if (direction.sqrMagnitude < 0.001f) return;
 
+            if (ObjectPooler.Instance == null) return;
+
             var projectile = ObjectPooler.Instance.Get<Projectile>(
                 _weapon.projectile, origin, Quaternion.LookRotation(direction, Vector3.up));
             projectile?.Launch(direction, _weapon.projectileSpeed);

@@ -15,8 +15,20 @@ namespace SkyloftGame.Level
         [Tooltip("Survival time (seconds). The game is won when the time runs out.")]
         [Min(5f)] public float durationSeconds = 180f;
 
-        [Header("Enemy Waves")]
-        public Wave[] waves;
+        [Header("Wave Spawning")]
+        [Tooltip("Delay before the very first wave spawns (seconds).")]
+        [Min(0f)] public float firstWaveDelay = 2f;
+
+        [Tooltip("Seconds between waves. A new wave keeps spawning on this cadence, " +
+                 "looping until the level timer runs out.")]
+        [Min(1f)] public float timeBetweenWaves = 6f;
+
+        [Tooltip("Drip interval between individual enemies inside a single wave (seconds).")]
+        [Min(0f)] public float spawnInterval = 0.15f;
+
+        [Tooltip("Enemy types and how many of each spawn EVERY wave. " +
+                 "Add a row per enemy type; the same set is looped each wave until time runs out.")]
+        public EnemySpawnEntry[] enemiesPerWave;
 
         [Header("Spawn Area")]
         [Tooltip("Outer radius of the ring around the player where enemies appear.")]
@@ -32,17 +44,12 @@ namespace SkyloftGame.Level
     }
 
     [System.Serializable]
-    public class Wave
+    public class EnemySpawnEntry
     {
-        [Tooltip("Enemy pool used by this wave (PoolId asset).")]
+        [Tooltip("Enemy pool used for this entry (PoolId asset).")]
         public PoolId enemy;
 
-        [Min(1)] public int count = 10;
-
-        [Tooltip("Spawn interval between enemies in the same wave (seconds). Smaller = faster flow.")]
-        [Min(0.02f)] public float spawnInterval = 0.1f;
-
-        [Tooltip("How many seconds after the level start this wave is triggered.")]
-        [Min(0f)] public float startDelay = 0f;
+        [Tooltip("How many of this enemy spawn every wave.")]
+        [Min(0)] public int count = 5;
     }
 }

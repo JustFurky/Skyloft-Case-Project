@@ -18,22 +18,18 @@ namespace SkyloftGame.Gameplay
         [Tooltip("How many candidate points to try when finding a valid NavMesh spawn point.")]
         [SerializeField] private int _spawnPositionAttempts = 8;
 
-        [Tooltip("Between-wave countdown and blink settings.")]
-        [SerializeField] private WaveSettings _waveSettings;
+        [Tooltip("How many seconds before a wave spawns the HUD countdown warning appears. " +
+                 "The wait itself is LevelData.timeBetweenWaves; only the last N seconds are shown.")]
+        [Min(0)] [SerializeField] private int _warnSecondsBeforeWave = 3;
 
         private CancellationTokenSource _cts;
         private LevelData _level;
         private Transform _target;
-        private int _totalWaves;
-        private int _completedWaves;
 
         public event Action<int> WaveCountdownTick;
         public event Action       WaveStarted;
 
         public int AliveCount => EnemyRegistry.AliveCount;
-
-        public bool IsCleared =>
-            _totalWaves > 0 && _completedWaves >= _totalWaves && AliveCount == 0;
 
         private void OnDestroy() => CancelRun();
 
@@ -47,12 +43,14 @@ namespace SkyloftGame.Gameplay
                 return;
             }
 
-            _level          = level;
-            _target         = target;
-            _totalWaves     = level.waves?.Length ?? 0;
-            _completedWaves = 0;
+            _level  = level;
+            _target = target;
 
-            if (_totalWaves == 0) return;
+            if (!HasSpawnableEntries(level))
+            {
+                Debug.LogWarning($"[EnemySpawner] '{level.displayName}' has no enemy entries; nothing will spawn.", this);
+                return;
+            }
 
             _cts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
             RunLevelAsync(_cts.Token).Forget();
@@ -62,10 +60,7 @@ namespace SkyloftGame.Gameplay
         {
             CancelRun();
 
-            _totalWaves     = 0;
-            _completedWaves = 0;
-
-            WaveStarted?.Invoke();
+            WaveStarted?.Invoke();   // hide any HUD countdown
 
             foreach (var enemy in EnemyRegistry.Snapshot())
                 if (enemy != null) enemy.ReturnToPool();
@@ -79,56 +74,69 @@ namespace SkyloftGame.Gameplay
             _cts = null;
         }
 
+        // Spawns waves on a fixed time cadence and loops them until the level ends.
+        // The owning state (GameWon/GameLost/Menu) calls StopAndClear, which cancels this token.
         private async UniTaskVoid RunLevelAsync(CancellationToken token)
         {
             await UniTask.Yield(token);
 
-            for (int i = 0; i < _level.waves.Length; i++)
+            await CountdownAsync(_level.firstWaveDelay, token);
+
+            while (!token.IsCancellationRequested)
             {
-                if (ShouldCountdownBefore(i))
-                    await CountdownAsync(_waveSettings.betweenWaveCountdown, token);
-                else
-                    WaveStarted?.Invoke();
-
-                await SpawnWaveAsync(_level.waves[i], token);
-                await UniTask.WaitUntil(() => AliveCount == 0, cancellationToken: token);
-
-                _completedWaves++;
+                await SpawnWaveAsync(token);
+                await CountdownAsync(_level.timeBetweenWaves, token);
             }
         }
 
-        private bool ShouldCountdownBefore(int waveIndex)
-            => _waveSettings != null
-               && _waveSettings.betweenWaveCountdown > 0
-               && (waveIndex > 0 || _waveSettings.countdownBeforeFirstWave);
-
-        private async UniTask CountdownAsync(int seconds, CancellationToken token)
+        // Waits the full duration, but only fires the HUD "next wave" warning during the
+        // last _warnSecondsBeforeWave seconds; then signals the wave start.
+        private async UniTask CountdownAsync(float seconds, CancellationToken token)
         {
-            for (int s = seconds; s > 0; s--)
+            for (int s = Mathf.FloorToInt(seconds); s > 0; s--)
             {
-                WaveCountdownTick?.Invoke(s);
+                if (s <= _warnSecondsBeforeWave)
+                    WaveCountdownTick?.Invoke(s);
                 await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
             }
             WaveStarted?.Invoke();
         }
 
-        private async UniTask SpawnWaveAsync(Wave wave, CancellationToken token)
+        // One wave = every configured enemy entry, "count" copies each, dripped by spawnInterval.
+        private async UniTask SpawnWaveAsync(CancellationToken token)
         {
-            if (wave.startDelay > 0f)
-                await UniTask.Delay(TimeSpan.FromSeconds(wave.startDelay), cancellationToken: token);
+            int maxAlive = Mathf.Max(1, _level.maxAliveEnemies);
+            var entries  = _level.enemiesPerWave;
+            if (entries == null) return;
 
-            for (int i = 0; i < wave.count; i++)
+            foreach (var entry in entries)
             {
-                await UniTask.WaitUntil(() => AliveCount < _level.maxAliveEnemies, cancellationToken: token);
+                if (entry == null || entry.enemy == null || entry.count <= 0) continue;
 
-                SpawnOne(wave.enemy);
-                await UniTask.Delay(TimeSpan.FromSeconds(wave.spawnInterval), cancellationToken: token);
+                for (int i = 0; i < entry.count; i++)
+                {
+                    await UniTask.WaitUntil(() => AliveCount < maxAlive, cancellationToken: token);
+
+                    SpawnOne(entry.enemy);
+
+                    if (_level.spawnInterval > 0f)
+                        await UniTask.Delay(TimeSpan.FromSeconds(_level.spawnInterval), cancellationToken: token);
+                }
             }
+        }
+
+        private static bool HasSpawnableEntries(LevelData level)
+        {
+            if (level.enemiesPerWave == null) return false;
+            foreach (var entry in level.enemiesPerWave)
+                if (entry != null && entry.enemy != null && entry.count > 0) return true;
+            return false;
         }
 
         private void SpawnOne(PoolId pool)
         {
             if (pool == null || !TryGetSpawnPosition(out Vector3 position)) return;
+            if (ObjectPooler.Instance == null) return;
 
             Vector3 toTarget = _target.position - position;
             toTarget.y = 0f;

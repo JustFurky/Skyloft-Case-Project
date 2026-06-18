@@ -24,10 +24,8 @@ namespace SkyloftGame.States
 
         public void Update()
         {
+            // Win is purely time-based: enemies keep coming until the timer elapses.
             _manager.Timer?.Tick(Time.deltaTime);
-
-            if (_manager.Spawner != null && _manager.Spawner.IsCleared)
-                _manager.WinGame();
         }
 
         public void FixedUpdate() { }

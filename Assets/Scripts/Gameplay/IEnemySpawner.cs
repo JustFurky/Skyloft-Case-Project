@@ -8,8 +8,6 @@ namespace SkyloftGame.Gameplay
     {
         int AliveCount { get; }
 
-        bool IsCleared { get; }
-
         event Action<int> WaveCountdownTick;
 
         event Action WaveStarted;
